@@ -1,5 +1,7 @@
 # Medical_Crosser
 
+**Live app:** https://steamwolfau.github.io/Medical_Crosser/
+
 
 A single-file web app. Open `index.html` in any browser, including on a phone. There's no install, no account and no build step, and it works offline.
 
@@ -29,3 +31,9 @@ To add a medicine, add an entry to the `MEDS` array in `index.html`. Use side-ef
 ## Important
 
 This is general educational information, not medical advice, and it is not exhaustive. The content was compiled from widely known product information. It has **not** been clinically reviewed and doesn't account for age, kidney or liver function, pregnancy or other conditions. Have a pharmacist review the data before relying on it, and always check the Consumer Medicine Information (CMI) leaflet.
+
+## Publishing (GitHub Pages)
+
+The app is a static page with `index.html` in the repository root, so GitHub Pages serves it as-is. The `.nojekyll` file turns off Jekyll processing.
+
+To enable Pages: **Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: `main` / `(root)` → Save**. The site is published at the link above within a minute or two.
