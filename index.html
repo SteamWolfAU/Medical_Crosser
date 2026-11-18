@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medicine Side Effects</title>
+<meta name="description" content="Enter the Australian medicines you take and their doses to get a plain-English summary of side effects and of side effects that may come from combining them.">
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --ink:#1b1f24; --muted:#5b6470; --line:#dde1e6;
+  --accent:#1f6feb; --accent-ink:#ffffff; --chip:#eef2f7;
+  --avoid:#b42318; --avoid-bg:#fdecea;
+  --major:#b54708; --major-bg:#fff1e6;
+  --moderate:#8a6100; --moderate-bg:#fff8db;
+  --minor:#356b2f; --minor-bg:#eaf6e8;
+  --info-bg:#eaf2ff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111418; --card:#1b2026; --ink:#e8ecf0; --muted:#9aa4b0; --line:#2e353d;
+    --accent:#4d90fe; --accent-ink:#0b0f14; --chip:#252c34;
+    --avoid:#ff8a80; --avoid-bg:#3a1714;
+    --major:#ffb36b; --major-bg:#3a2412;
+    --moderate:#f2cf5b; --moderate-bg:#342b0f;
+    --minor:#93d68a; --minor-bg:#16301a;
+    --info-bg:#16243a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111418; --card:#1b2026; --ink:#e8ecf0; --muted:#9aa4b0; --line:#2e353d;
+  --accent:#4d90fe; --accent-ink:#0b0f14; --chip:#252c34;
+  --avoid:#ff8a80; --avoid-bg:#3a1714;
+  --major:#ffb36b; --major-bg:#3a2412;
+  --moderate:#f2cf5b; --moderate-bg:#342b0f;
+  --minor:#93d68a; --minor-bg:#16301a;
+  --info-bg:#16243a;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+main{max-width:820px;margin:0 auto;padding:16px 16px 64px}
+h1{font-size:1.6rem;margin:.4em 0 .2em}
+h2{font-size:1.25rem;margin:1.6em 0 .5em}
+h3{font-size:1.05rem;margin:1em 0 .3em}
+p{margin:.4em 0}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.notice{background:var(--info-bg);border-radius:12px;padding:12px 14px;font-size:.95rem}
+.notice strong{display:block;margin-bottom:2px}
+label{font-weight:600;display:block;margin:10px 0 4px}
+input,select,button{font:inherit}
+input[type=text],input[type=number],select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1 1 140px}
+button{cursor:pointer;border:0;border-radius:10px;padding:12px 16px;font-weight:600}
+.btn{background:var(--accent);color:var(--accent-ink)}
+.btn-ghost{background:var(--chip);color:var(--ink)}
+.btn-link{background:none;color:var(--accent);padding:6px 4px;font-weight:600}
+.search-wrap{position:relative}
+.suggest{position:absolute;left:0;right:0;top:100%;z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-top:4px;max-height:320px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.suggest button{display:block;width:100%;text-align:left;background:none;color:var(--ink);border-radius:0;padding:10px 12px;font-weight:400;border-bottom:1px solid var(--line)}
+.suggest button:last-child{border-bottom:0}
+.suggest button[aria-selected=true],.suggest button:hover{background:var(--chip)}
+.suggest .b{font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{background:var(--chip);border-radius:999px;padding:4px 10px;font-size:.92rem}
+.med-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.med-head h3{margin:0}
+.med-sub{color:var(--muted);font-size:.92rem}
+ul.clean{margin:.3em 0;padding-left:1.2em}
+ul.clean li{margin:.15em 0}
+.pill{display:inline-block;font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:999px;letter-spacing:.02em;text-transform:uppercase;vertical-align:middle}
+.sev-avoid{background:var(--avoid-bg);border-left:6px solid var(--avoid)}
+.sev-major{background:var(--major-bg);border-left:6px solid var(--major)}
+.sev-moderate{background:var(--moderate-bg);border-left:6px solid var(--moderate)}
+.sev-minor{background:var(--minor-bg);border-left:6px solid var(--minor)}
+.pill-avoid{background:var(--avoid);color:var(--card)}
+.pill-major{background:var(--major);color:var(--card)}
+.pill-moderate{background:var(--moderate);color:var(--card)}
+.pill-minor{background:var(--minor);color:var(--card)}
+.ix{border-radius:12px;padding:12px 14px;margin:10px 0}
+.ix h3{margin:.2em 0 .3em}
+.ix .who{font-weight:600}
+.dose-ok{color:var(--minor);font-weight:600}
+.dose-warn{color:var(--avoid);font-weight:700}
+.serious{background:var(--avoid-bg);border-radius:10px;padding:8px 12px;margin-top:8px}
+.serious h4{margin:.2em 0;color:var(--avoid);font-size:1rem}
+details summary{cursor:pointer;font-weight:600;color:var(--accent);padding:4px 0}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:.9rem;margin:6px 0 4px}
+.empty{color:var(--muted);font-style:italic}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.hidden{display:none}
+footer{margin-top:32px;font-size:.88rem;color:var(--muted)}
+@media print{
+  body{background:#fff;color:#000}
+  .no-print,.search-card{display:none!important}
+  .card{border:1px solid #999;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>💊 Medicine Side Effects</h1>
+  <p class="muted">Add the medicines you've been prescribed, including any you buy yourself. You'll get a plain-English summary of each medicine's side effects, and a check for side effects that can come from taking them together.</p>
+
+  <div class="notice" role="note">
+    <strong>This is general information, not medical advice.</strong>
+    Don't stop, start or change a medicine because of this page. Talk to your doctor or pharmacist first.
+    In an emergency call <b>000</b>. For poisoning or an overdose call the Poisons Information Centre on <b>13 11 26</b> (24/7).
+    For health advice call healthdirect on <b>1800 022 222</b>.
+  </div>
+
+  <section class="card search-card no-print" aria-labelledby="add-h">
+    <h2 id="add-h" style="margin-top:0">Add a medicine</h2>
+    <label for="q">Medicine name (generic or brand)</label>
+    <div class="search-wrap">
+      <input id="q" type="text" autocomplete="off" placeholder="e.g. Lipitor, sertraline, Panadol" role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list">
+      <div id="suggest" class="suggest hidden" role="listbox"></div>
+    </div>
+    <p id="not-found" class="small hidden"></p>
+
+    <form id="dose-form" class="hidden" autocomplete="off">
+      <p id="picked" style="margin-top:12px"></p>
+      <div class="row">
+        <div>
+          <label for="amt">Amount each time</label>
+          <input id="amt" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 20">
+        </div>
+        <div>
+          <label for="unit">Unit</label>
+          <select id="unit">
+            <option value="mg">mg</option>
+            <option value="mcg">mcg (microgram)</option>
+            <option value="g">g</option>
+            <option value="units">units</option>
+          </select>
+        </div>
+        <div>
+          <label for="freq">How often</label>
+          <select id="freq">
+            <option value="1">Once a day</option>
+            <option value="2">Twice a day</option>
+            <option value="3">3 times a day</option>
+            <option value="4">4 times a day</option>
+            <option value="w">Once a week</option>
+            <option value="prn">Only when needed</option>
+          </select>
+        </div>
+      </div>
+      <div id="prn-wrap" class="hidden">
+        <label for="prnmax">Most times you take it in one day</label>
+        <input id="prnmax" type="number" inputmode="numeric" min="1" step="1" placeholder="e.g. 4">
+      </div>
+      <p class="small muted" id="dose-hint"></p>
+      <div class="row" style="margin-top:12px">
+        <button type="submit" class="btn">Add to my list</button>
+        <button type="button" class="btn-ghost" id="cancel">Cancel</button>
+      </div>
+      <p class="small muted">Not sure of the dose? Leave the amount blank. The strength is printed on the box and on the pharmacy label.</p>
+    </form>
+  </section>
+
+  <section aria-labelledby="list-h">
+    <div class="med-head" style="align-items:center">
+      <h2 id="list-h">My medicines <span id="count" class="muted small"></span></h2>
+      <div class="toolbar no-print">
+        <button class="btn-ghost" id="print" type="button">Print / save PDF</button>
+        <button class="btn-ghost" id="clear" type="button">Clear all</button>
+      </div>
+    </div>
+    <div id="list"><p class="empty">No medicines added yet.</p></div>
+  </section>
+
+  <section aria-labelledby="combo-h">
+    <h2 id="combo-h">Taking them together</h2>
+    <div class="legend">
+      <span><span class="pill pill-avoid">Avoid</span> usually shouldn't be combined</span>
+      <span><span class="pill pill-major">Major</span> talk to your doctor or pharmacist soon</span>
+      <span><span class="pill pill-moderate">Moderate</span> be aware, may need checks</span>
+      <span><span class="pill pill-minor">Minor</span> small effect</span>
+    </div>
+    <div id="combo"><p class="empty">Add two or more medicines to check them together.</p></div>
+
+    <h2 id="shared-h">Side effects more than one of your medicines can cause</h2>
+    <p class="small muted">If you notice one of these, more than one medicine could be the cause, and the effect may be stronger when you take them together.</p>
+    <div id="shared"><p class="empty">Add two or more medicines to see shared side effects.</p></div>
+  </section>
+
+  <footer>
+    <p><b>About this information.</b> It is a plain-English summary of commonly reported side effects and well-known interactions for adults. It does not list every side effect or interaction. It doesn't account for your age, weight, kidney or liver function, pregnancy, or other health conditions. For full details, read the Consumer Medicine Information (CMI) leaflet for your medicine. Your pharmacist can give you one, and you can search for it on the TGA website or at healthdirect.gov.au.</p>
+    <p>Usual dose ranges are typical adult ranges. Your doctor may prescribe a different dose for good reasons.</p>
+    <p>Your list is saved only in this browser on this device. Nothing is sent anywhere.</p>
+  </footer>
+</main>
+
+<script>
+/* ------------------------------------------------------------------ */
+/* Side-effect vocabulary (plain English). Shared keys allow cross-    */
+/* referencing which medicines cause the same side effect.            */
+/* ------------------------------------------------------------------ */
+const SE = {
+  nausea:'Nausea (feeling sick)', vomit:'Vomiting', diarrhoea:'Diarrhoea', constipation:'Constipation',
+  indigestion:'Indigestion or stomach pain', heartburn:'Heartburn', wind:'Bloating or wind',
+  headache:'Headache', dizzy:'Dizziness or unsteadiness', drowsy:'Drowsiness or sleepiness',
+  insomnia:'Trouble sleeping', tired:'Tiredness or weakness', drymouth:'Dry mouth',
+  rash:'Skin rash', itch:'Itching', muscle:'Muscle aches, cramps or back pain', joint:'Joint pain',
+  cough:'Dry, tickly cough', swelling:'Ankle or leg swelling (fluid)', flushing:'Flushing (warm, red face)',
+  wgain:'Weight gain', wloss:'Weight loss', appetite_down:'Loss of appetite', appetite_up:'Increased appetite',
+  sweating:'Sweating', sexual:'Sexual problems (low sex drive, erection or orgasm problems)',
+  tremor:'Shaking or trembling (tremor)', agitation:'Nervousness, restlessness or anxiety',
+  vision:'Blurred or changed vision', palpitations:'Fast or pounding heartbeat',
+  lightheaded:'Light-headed when standing up (low blood pressure)', thrush:'Thrush (yeast infection)',
+  taste:'Taste changes (e.g. metallic taste)', bruising:'Bruising or bleeding more easily',
+  urination:'Passing more urine', urine_retention:'Difficulty passing urine', cold:'Cold hands and feet',
+  slowhr:'Slow heartbeat', confusion:'Confusion or memory problems', mood:'Mood changes or irritability',
+  hair:'Hair thinning', nose:'Blocked or runny nose', sun:'Sunburns more easily (sun sensitivity)',
+  lowsugar:'Low blood sugar (shaky, sweaty, hungry)', hoarse:'Hoarse voice', genital:'Genital thrush or urinary infections',
+  thirst:'Thirst or dehydration', breast:'Breast tenderness or enlargement', bp_up:'Raised blood pressure',
+  mouth:'Mouth ulcers', chest:'Brief chest or throat tightness, tingling', spotting:'Spotting between periods',
+  injection:'Redness or lumps where injected', nightmares:'Vivid dreams or nightmares'
+};
+
+/* ------------------------------------------------------------------ */
+/* Medicine data. unit: unit the dose is checked in. range: usual      */
+/* adult daily (or weekly) range text. maxDay / maxWeek: usual adult    */
+/* maximum used for the dose check (omitted where it varies too much).  */
+/* tags drive the combination rules; grp flags same-group duplicates.   */
+/* ------------------------------------------------------------------ */
+const MEDS = [
+/* --- Heart, blood pressure, cholesterol --- */
+{id:'atorvastatin',name:'Atorvastatin',brands:['Lipitor','Lorstat','Trovas'],use:'Lowers cholesterol (statin)',unit:'mg',range:'10–80 mg once a day',maxDay:80,grp:'statin',tags:['statin'],
+ common:['muscle','joint','diarrhoea','nausea','indigestion','headache','nose'],
+ serious:['Unexplained muscle pain, tenderness or weakness, especially with fever or dark urine (rare muscle breakdown)','Yellow skin or eyes (liver problems)'],
+ tips:['Tell your doctor about unexplained muscle pain.']},
+{id:'rosuvastatin',name:'Rosuvastatin',brands:['Crestor','Cavstat','Rosuzet (with ezetimibe)'],use:'Lowers cholesterol (statin)',unit:'mg',range:'5–40 mg once a day',maxDay:40,grp:'statin',tags:['statin'],
+ common:['muscle','headache','indigestion','nausea','constipation','dizzy'],
+ serious:['Unexplained muscle pain, tenderness or weakness, especially with fever or dark urine','Yellow skin or eyes'],
+ tips:['People of Asian ancestry often need a lower dose.']},
+{id:'simvastatin',name:'Simvastatin',brands:['Zocor','Lipex','Vytorin (with ezetimibe)'],use:'Lowers cholesterol (statin)',unit:'mg',range:'10–40 mg once a day, usually at night',maxDay:80,grp:'statin',tags:['statin'],
+ common:['muscle','indigestion','constipation','wind','headache','nausea'],
+ serious:['Unexplained muscle pain, tenderness or weakness, especially with fever or dark urine','Yellow skin or eyes'],
+ tips:['Avoid large amounts of grapefruit or grapefruit juice: it raises simvastatin levels.']},
+{id:'ezetimibe',name:'Ezetimibe',brands:['Ezetrol','Ezemibe'],use:'Lowers cholesterol by reducing absorption',unit:'mg',range:'10 mg once a day',maxDay:10,tags:[],
+ common:['diarrhoea','indigestion','tired','muscle','headache'],
+ serious:['Unexplained muscle pain or weakness','Yellow skin or eyes']},
+{id:'perindopril',name:'Perindopril',brands:['Coversyl','Perindo','Coversyl Plus (with indapamide)'],use:'Blood pressure, heart failure, heart protection (ACE inhibitor)',unit:'mg',range:'2.5–10 mg once a day',maxDay:10,grp:'raas',tags:['acei','raas','hyperk','lowbp'],
+ common:['cough','dizzy','lightheaded','headache','tired','taste','nausea'],
+ serious:['Swelling of the face, lips, tongue or throat, or trouble breathing (angioedema). Call 000','Muscle weakness or irregular heartbeat (high potassium)'],
+ tips:['A dry, tickly cough is common. Tell your doctor because another medicine can usually be used instead.','Stand up slowly when you first start.']},
+{id:'ramipril',name:'Ramipril',brands:['Tritace','Ramace'],use:'Blood pressure, heart failure, heart protection (ACE inhibitor)',unit:'mg',range:'1.25–10 mg a day',maxDay:10,grp:'raas',tags:['acei','raas','hyperk','lowbp'],
+ common:['cough','dizzy','lightheaded','headache','tired','nausea'],
+ serious:['Swelling of the face, lips, tongue or throat, or trouble breathing (angioedema). Call 000','Muscle weakness or irregular heartbeat (high potassium)'],
+ tips:['A dry cough is common. Tell your doctor because another medicine can usually be used instead.']},
+{id:'irbesartan',name:'Irbesartan',brands:['Avapro','Karvea','Avapro HCT (with hydrochlorothiazide)'],use:'Blood pressure, kidney protection in diabetes (ARB)',unit:'mg',range:'75–300 mg once a day',maxDay:300,grp:'raas',tags:['arb','raas','hyperk','lowbp'],
+ common:['dizzy','lightheaded','tired','headache','muscle'],
+ serious:['Swelling of the face, lips or tongue (rare)','Muscle weakness or irregular heartbeat (high potassium)']},
+{id:'candesartan',name:'Candesartan',brands:['Atacand','Candesan'],use:'Blood pressure, heart failure (ARB)',unit:'mg',range:'4–32 mg once a day',maxDay:32,grp:'raas',tags:['arb','raas','hyperk','lowbp'],
+ common:['dizzy','lightheaded','headache','tired','muscle'],
+ serious:['Swelling of the face, lips or tongue (rare)','Muscle weakness or irregular heartbeat (high potassium)']},
+{id:'telmisartan',name:'Telmisartan',brands:['Micardis','Pritor'],use:'Blood pressure, heart protection (ARB)',unit:'mg',range:'20–80 mg once a day',maxDay:80,grp:'raas',tags:['arb','raas','hyperk','lowbp'],
+ common:['dizzy','lightheaded','muscle','diarrhoea','indigestion'],
+ serious:['Swelling of the face, lips or tongue (rare)','Muscle weakness or irregular heartbeat (high potassium)']},
+{id:'amlodipine',name:'Amlodipine',brands:['Norvasc','Amlo','Caduet (with atorvastatin)'],use:'Blood pressure, angina (calcium channel blocker)',unit:'mg',range:'2.5–10 mg once a day',maxDay:10,grp:'dhp',tags:['lowbp'],
+ common:['swelling','flushing','headache','dizzy','tired','palpitations','nausea'],
+ serious:['Chest pain that is new or worse','Fainting'],
+ tips:['Ankle swelling is common and often depends on the dose. Tell your doctor if it bothers you.']},
+{id:'metoprolol',name:'Metoprolol',brands:['Betaloc','Toprol-XL','Minax'],use:'Blood pressure, angina, heart rhythm, heart failure (beta blocker)',unit:'mg',range:'25–200 mg a day (up to 400 mg)',maxDay:400,grp:'beta',tags:['beta','brady','lowbp'],
+ common:['tired','cold','slowhr','dizzy','lightheaded','nightmares','sexual'],
+ serious:['Very slow heartbeat, fainting','Worse breathlessness or ankle swelling','Wheezing'],
+ tips:['Don’t stop suddenly. This can bring on chest pain. Your doctor will reduce the dose slowly.']},
+{id:'bisoprolol',name:'Bisoprolol',brands:['Bicor','Bisoprolol Sandoz'],use:'Heart failure, blood pressure, angina (beta blocker)',unit:'mg',range:'1.25–10 mg once a day',maxDay:20,grp:'beta',tags:['beta','brady','lowbp'],
+ common:['tired','cold','slowhr','dizzy','headache','lightheaded'],
+ serious:['Very slow heartbeat, fainting','Worse breathlessness or ankle swelling','Wheezing'],
+ tips:['Don’t stop suddenly. Your doctor will reduce the dose slowly.']},
+{id:'indapamide',name:'Indapamide',brands:['Natrilix','Dapa-Tabs','Coversyl Plus (with perindopril)'],use:'Blood pressure (thiazide-like diuretic, "fluid tablet")',unit:'mg',range:'1.25–2.5 mg once a day',maxDay:2.5,tags:['diuretic','lowk','hypona','lowbp'],
+ common:['dizzy','lightheaded','urination','headache','tired','muscle'],
+ serious:['Confusion, severe tiredness, muscle cramps or weakness (low sodium or potassium)','Severe skin rash'],
+ tips:['Take it in the morning so you don’t have to get up at night to pass urine.']},
+{id:'furosemide',name:'Furosemide (frusemide)',brands:['Lasix','Urex','Uremide'],use:'Fluid build-up, heart failure (loop diuretic, "fluid tablet")',unit:'mg',range:'20–80 mg a day; higher in kidney or heart disease',tags:['diuretic','lowk','lowbp','dehydrate'],
+ common:['urination','dizzy','lightheaded','thirst','muscle'],
+ serious:['Very dry mouth, severe thirst, confusion, passing little urine (dehydration)','Ringing in the ears or hearing loss','Painful, swollen joint (gout)'],
+ tips:['If you have vomiting or diarrhoea, ask your doctor whether to pause it ("sick day" plan).']},
+{id:'spironolactone',name:'Spironolactone',brands:['Aldactone','Spiractin'],use:'Heart failure, fluid, blood pressure, acne (potassium-sparing diuretic)',unit:'mg',range:'12.5–100 mg a day',maxDay:400,tags:['diuretic','hyperk','lowbp','spiro'],
+ common:['breast','dizzy','nausea','urination','headache','tired'],
+ serious:['Muscle weakness, numbness, irregular heartbeat (high potassium)','Confusion or severe drowsiness'],
+ tips:['Avoid potassium supplements and salt substitutes (e.g. LoSalt) unless your doctor says it’s OK.']},
+{id:'warfarin',name:'Warfarin',brands:['Coumadin','Marevan'],use:'Prevents blood clots (anticoagulant)',unit:'mg',range:'Varies, set by INR blood tests',grp:'anticoag',tags:['anticoag','bleed'],
+ common:['bruising'],
+ serious:['Bleeding that won’t stop, blood in urine, red or black stools, vomiting blood','Severe headache or sudden weakness (bleeding in the brain). Call 000','Coughing up blood'],
+ tips:['Tell every doctor, dentist and pharmacist you take warfarin, including before you buy herbal or over-the-counter products.','Keep your intake of green leafy vegetables (vitamin K) fairly steady.','Many antibiotics change the effect. You may need an extra INR test.']},
+{id:'apixaban',name:'Apixaban',brands:['Eliquis'],use:'Prevents blood clots and stroke (anticoagulant)',unit:'mg',range:'2.5–5 mg twice a day',maxDay:20,grp:'anticoag',tags:['anticoag','bleed'],
+ common:['bruising','nausea'],
+ serious:['Bleeding that won’t stop, blood in urine, red or black stools, vomiting blood','Severe headache or sudden weakness. Call 000'],
+ tips:['Don’t miss doses. Protection wears off quickly.']},
+{id:'rivaroxaban',name:'Rivaroxaban',brands:['Xarelto'],use:'Prevents blood clots and stroke (anticoagulant)',unit:'mg',range:'10–20 mg a day (higher for the first 3 weeks after a clot)',maxDay:30,grp:'anticoag',tags:['anticoag','bleed'],
+ common:['bruising','nausea','indigestion'],
+ serious:['Bleeding that won’t stop, blood in urine, red or black stools, vomiting blood','Severe headache or sudden weakness. Call 000'],
+ tips:['Take 15 mg and 20 mg doses with food.']},
+{id:'clopidogrel',name:'Clopidogrel',brands:['Plavix','Iscover','DuoCover (with aspirin)'],use:'Prevents heart attack and stroke (antiplatelet)',unit:'mg',range:'75 mg once a day (a one-off loading dose of 300–600 mg is sometimes given)',maxDay:75,grp:'antiplatelet',tags:['antiplatelet','bleed'],
+ common:['bruising','diarrhoea','indigestion','rash'],
+ serious:['Bleeding that won’t stop, black stools, vomiting blood','Fever with tiny purple spots on the skin (rare blood disorder)'],
+ tips:['Don’t stop before surgery or dental work unless your heart doctor agrees.']},
+{id:'aspirin',name:'Aspirin',brands:['Cartia','Astrix','Aspro Clear','Disprin','DuoCover (with clopidogrel)'],use:'Low dose (100 mg) prevents heart attack and stroke. High dose treats pain and fever',unit:'mg',range:'100–300 mg a day for the heart; up to 4 g a day for pain',maxDay:4000,grp:'antiplatelet',tags:['antiplatelet','bleed','gi','aspirin'],
+ common:['indigestion','heartburn','nausea','bruising'],
+ serious:['Black or bloody stools, vomiting blood (stomach bleeding)','Wheezing or breathlessness (aspirin-sensitive asthma)','Ringing in the ears (high doses)'],
+ tips:['Take with food.','Not for children under 16 (Reye’s syndrome) unless a doctor advises.']},
+{id:'digoxin',name:'Digoxin',brands:['Lanoxin','Lanoxin PG'],use:'Heart rhythm (atrial fibrillation), heart failure',unit:'mcg',range:'62.5–250 mcg once a day',maxDay:250,tags:['brady','digoxin'],
+ common:['nausea','appetite_down','diarrhoea','dizzy','vision','confusion'],
+ serious:['Nausea, vomiting, yellow-green vision, confusion or very slow or irregular pulse (digoxin toxicity)'],
+ tips:['Regular blood tests check your level and kidney function.']},
+{id:'amiodarone',name:'Amiodarone',brands:['Cordarone','Aratac'],use:'Heart rhythm problems',unit:'mg',range:'100–400 mg a day (higher when starting)',maxDay:1200,tags:['qt','brady'],
+ common:['nausea','sun','tired','tremor','constipation','vision'],
+ serious:['New cough or breathlessness (lung problems)','Yellow skin or eyes','Weight change, feeling too hot or too cold, mood change (thyroid problems)','Fainting or very slow or irregular heartbeat'],
+ tips:['Use strong sunscreen and cover up. Skin can turn blue-grey with sun exposure.','You’ll need regular thyroid, liver and lung checks.']},
+{id:'gtn',name:'Glyceryl trinitrate (GTN)',brands:['Nitrolingual Pumpspray','Anginine','Transiderm-Nitro','Nitro-Dur'],use:'Relieves or prevents angina (nitrate)',unit:'mcg',range:'400–800 mcg (1–2 sprays) under the tongue when needed',grp:'nitrate',tags:['nitrate','lowbp'],
+ common:['headache','flushing','dizzy','lightheaded'],
+ serious:['Chest pain not relieved after 2 doses 5 minutes apart. Call 000'],
+ tips:['Sit down before using it, as it can make you faint.']},
+{id:'ismn',name:'Isosorbide mononitrate',brands:['Imdur','Duride','Monodur'],use:'Prevents angina (long-acting nitrate)',unit:'mg',range:'30–120 mg once a day',maxDay:120,grp:'nitrate',tags:['nitrate','lowbp'],
+ common:['headache','flushing','dizzy','lightheaded','nausea'],
+ serious:['Fainting','Chest pain that is new or worse']},
+{id:'diltiazem',name:'Diltiazem',brands:['Cardizem CD','Vasocardol CD','Diltahexal'],use:'Angina, blood pressure, heart rate control (calcium channel blocker)',unit:'mg',range:'180–360 mg a day',maxDay:360,tags:['brady','lowbp','ratelimit','cyp3a4mod'],
+ common:['swelling','headache','dizzy','flushing','constipation','slowhr'],
+ serious:['Very slow heartbeat or fainting','Worse breathlessness or swelling']},
+{id:'verapamil',name:'Verapamil',brands:['Isoptin','Cordilox','Veracaps SR'],use:'Blood pressure, angina, heart rate control (calcium channel blocker)',unit:'mg',range:'120–480 mg a day',maxDay:480,tags:['brady','lowbp','ratelimit','cyp3a4mod'],
+ common:['constipation','swelling','headache','dizzy','slowhr','flushing'],
+ serious:['Very slow heartbeat or fainting','Worse breathlessness or swelling']},
+
+/* --- Diabetes and weight --- */
+{id:'metformin',name:'Metformin',brands:['Diabex','Diaformin','Formet','Janumet (with sitagliptin)','Xigduo XR (with dapagliflozin)'],use:'Type 2 diabetes',unit:'mg',range:'500–3000 mg a day (extended-release up to 2000 mg)',maxDay:3000,grp:null,tags:['diabetes'],
+ common:['nausea','diarrhoea','indigestion','taste','appetite_down','wind'],
+ serious:['Feeling very unwell with fast breathing, muscle pain, severe stomach pain and cold skin (lactic acidosis, rare)'],
+ tips:['Take with or just after food to reduce stomach upset.','You may need to pause it if you’re dehydrated or having a scan with contrast dye. Ask about a "sick day" plan.','Long-term use can lower vitamin B12.']},
+{id:'gliclazide',name:'Gliclazide',brands:['Diamicron MR','Glyade','Oziclide MR'],use:'Type 2 diabetes (sulfonylurea)',unit:'mg',range:'30–120 mg a day (modified release); 40–320 mg (standard)',maxDay:320,tags:['diabetes','hypo'],
+ common:['lowsugar','nausea','indigestion','wgain'],
+ serious:['Low blood sugar that doesn’t improve with sugar, confusion or fainting'],
+ tips:['Carry jelly beans or glucose tablets. Don’t skip meals.']},
+{id:'empagliflozin',name:'Empagliflozin',brands:['Jardiance','Jardiamet (with metformin)','Glyxambi (with linagliptin)'],use:'Type 2 diabetes, heart failure, kidney disease (SGLT2 inhibitor)',unit:'mg',range:'10–25 mg once a day',maxDay:25,grp:'sglt2',tags:['diabetes','sglt2','dehydrate','lowbp'],
+ common:['genital','urination','thirst','lightheaded'],
+ serious:['Nausea, vomiting, stomach pain, fast breathing or drowsiness, even with normal blood sugar (ketoacidosis)','Pain, redness or swelling of the genital or anal area with fever (rare serious infection)'],
+ tips:['Keep the genital area clean and dry.','Pause it if you can’t eat or drink, or before surgery. Ask about a "sick day" plan.']},
+{id:'dapagliflozin',name:'Dapagliflozin',brands:['Forxiga','Xigduo XR (with metformin)','Qtern (with saxagliptin)'],use:'Type 2 diabetes, heart failure, kidney disease (SGLT2 inhibitor)',unit:'mg',range:'10 mg once a day',maxDay:10,grp:'sglt2',tags:['diabetes','sglt2','dehydrate','lowbp'],
+ common:['genital','urination','thirst','lightheaded'],
+ serious:['Nausea, vomiting, stomach pain, fast breathing or drowsiness, even with normal blood sugar (ketoacidosis)','Pain, redness or swelling of the genital or anal area with fever (rare serious infection)'],
+ tips:['Pause it if you can’t eat or drink, or before surgery. Ask about a "sick day" plan.']},
+{id:'sitagliptin',name:'Sitagliptin',brands:['Januvia','Janumet (with metformin)'],use:'Type 2 diabetes (DPP-4 inhibitor)',unit:'mg',range:'25–100 mg once a day',maxDay:100,tags:['diabetes'],
+ common:['headache','nose','joint'],
+ serious:['Severe stomach pain going through to the back (pancreatitis)','Blisters on the skin']},
+{id:'semaglutide',name:'Semaglutide',brands:['Ozempic','Wegovy'],use:'Type 2 diabetes (Ozempic), weight management (Wegovy). Weekly injection',unit:'mg',range:'0.25–1 mg once a week (Ozempic); up to 2.4 mg (Wegovy)',maxWeek:2.4,weekly:true,tags:['diabetes'],
+ common:['nausea','vomit','diarrhoea','constipation','appetite_down','indigestion','wloss','wind'],
+ serious:['Severe stomach pain going through to the back (pancreatitis)','Pain under the right ribs, fever, yellow skin (gallbladder problems)','Signs of dehydration from ongoing vomiting'],
+ tips:['Nausea is usually worst when starting or increasing the dose. Eat smaller meals.']},
+{id:'insulin',name:'Insulin (any type)',brands:['NovoRapid','Humalog','Fiasp','Apidra','Lantus','Optisulin','Toujeo','Levemir','Tresiba','Protaphane','NovoMix 30','Humalog Mix','Ryzodeg'],use:'Diabetes',unit:'units',range:'Individual; set by your diabetes team',tags:['diabetes','hypo'],
+ common:['lowsugar','wgain','injection'],
+ serious:['Low blood sugar with confusion, drowsiness or fitting. Someone should give sugar or glucagon and call 000'],
+ tips:['Rotate injection sites.','Always carry fast-acting sugar.']},
+
+/* --- Stomach --- */
+{id:'pantoprazole',name:'Pantoprazole',brands:['Somac','Panthron','Salpraz'],use:'Reflux, stomach ulcers, stomach protection (PPI)',unit:'mg',range:'20–40 mg once a day (up to 80 mg)',maxDay:80,grp:'ppi',tags:['ppi'],
+ common:['headache','diarrhoea','nausea','indigestion','wind'],
+ serious:['Severe or watery diarrhoea that won’t stop','Muscle cramps, twitching or irregular heartbeat (low magnesium with long-term use)'],
+ tips:['Take 30–60 minutes before breakfast.','Ask your doctor every so often whether you still need it, or whether a lower dose would work.']},
+{id:'esomeprazole',name:'Esomeprazole',brands:['Nexium','Esopral','Nexium 24HR'],use:'Reflux, stomach ulcers (PPI)',unit:'mg',range:'20–40 mg once a day (up to 80 mg)',maxDay:80,grp:'ppi',tags:['ppi','cyp2c19inh'],
+ common:['headache','diarrhoea','nausea','indigestion','wind','constipation'],
+ serious:['Severe or watery diarrhoea that won’t stop','Muscle cramps or irregular heartbeat (low magnesium with long-term use)'],
+ tips:['Take 30–60 minutes before food.']},
+{id:'omeprazole',name:'Omeprazole',brands:['Losec','Maxor','Acimax','Probitor'],use:'Reflux, stomach ulcers (PPI)',unit:'mg',range:'10–40 mg once a day',maxDay:80,grp:'ppi',tags:['ppi','cyp2c19inh'],
+ common:['headache','diarrhoea','nausea','indigestion','wind','constipation'],
+ serious:['Severe or watery diarrhoea that won’t stop','Muscle cramps or irregular heartbeat (low magnesium with long-term use)'],
+ tips:['Take 30–60 minutes before food.']},
+{id:'metoclopramide',name:'Metoclopramide',brands:['Maxolon','Pramin'],use:'Nausea and vomiting',unit:'mg',range:'10 mg up to 3 times a day (usually for no more than 5 days)',maxDay:30,tags:['mildsed','dopamine_block'],
+ common:['drowsy','tired','agitation','diarrhoea'],
+ serious:['Uncontrolled movements of the face, tongue, eyes or neck','Fever with stiff muscles and confusion (rare)'],
+ tips:['Usually only used short-term because of the risk of movement side effects.']},
+{id:'ondansetron',name:'Ondansetron',brands:['Zofran','Ondaz','Zofran Zydis wafers'],use:'Nausea and vomiting',unit:'mg',range:'4–8 mg up to 3 times a day',maxDay:24,tags:['qt','sero_weak'],
+ common:['headache','constipation','flushing','tired'],
+ serious:['Fainting or a fast, irregular heartbeat']},
+
+/* --- Mental health and sleep --- */
+{id:'sertraline',name:'Sertraline',brands:['Zoloft','Setrona','Eleva'],use:'Depression, anxiety, OCD, PTSD (SSRI antidepressant)',unit:'mg',range:'50–200 mg once a day',maxDay:200,grp:'sero_ad',tags:['sero','bleed_mild','hypona','ssri'],
+ common:['nausea','diarrhoea','insomnia','drowsy','headache','sweating','sexual','drymouth','tremor','dizzy'],
+ serious:['Thoughts of self-harm or suicide, especially when starting or changing the dose. Call 13 11 14 (Lifeline) or 000','Agitation, high temperature, sweating, muscle twitching, fast heartbeat (serotonin syndrome)','Unusual bleeding or bruising'],
+ tips:['It can take 2–6 weeks to work fully.','Don’t stop suddenly. Your doctor will reduce the dose slowly.']},
+{id:'escitalopram',name:'Escitalopram',brands:['Lexapro','Esipram','Loxalate'],use:'Depression, anxiety (SSRI antidepressant)',unit:'mg',range:'5–20 mg once a day (max 10 mg if over 65)',maxDay:20,grp:'sero_ad',tags:['sero','bleed_mild','hypona','qt','ssri'],
+ common:['nausea','insomnia','drowsy','headache','sweating','sexual','drymouth','dizzy','tired'],
+ serious:['Thoughts of self-harm or suicide. Call 13 11 14 (Lifeline) or 000','Fainting or fast, irregular heartbeat','Agitation, fever, sweating, twitching (serotonin syndrome)'],
+ tips:['Don’t stop suddenly. Your doctor will reduce the dose slowly.']},
+{id:'citalopram',name:'Citalopram',brands:['Cipramil','Celapram','Ciazil'],use:'Depression, anxiety (SSRI antidepressant)',unit:'mg',range:'20–40 mg once a day (max 20 mg if over 65)',maxDay:40,grp:'sero_ad',tags:['sero','bleed_mild','hypona','qt','ssri'],
+ common:['nausea','insomnia','drowsy','headache','sweating','sexual','drymouth','dizzy'],
+ serious:['Thoughts of self-harm or suicide. Call 13 11 14 (Lifeline) or 000','Fainting or fast, irregular heartbeat','Agitation, fever, sweating, twitching (serotonin syndrome)'],
+ tips:['Doses above 40 mg raise the risk of heart rhythm problems.']},
+{id:'fluoxetine',name:'Fluoxetine',brands:['Prozac','Lovan','Zactin'],use:'Depression, OCD, bulimia (SSRI antidepressant)',unit:'mg',range:'20–60 mg once a day (up to 80 mg)',maxDay:80,grp:'sero_ad',tags:['sero','bleed_mild','hypona','ssri','cyp2d6inh'],
+ common:['nausea','insomnia','agitation','headache','appetite_down','sweating','sexual','diarrhoea','tremor'],
+ serious:['Thoughts of self-harm or suicide. Call 13 11 14 (Lifeline) or 000','Agitation, fever, sweating, twitching (serotonin syndrome)','Rash or hives'],
+ tips:['Usually taken in the morning because it can cause insomnia.']},
+{id:'paroxetine',name:'Paroxetine',brands:['Aropax','Extine','Paxtine'],use:'Depression, anxiety, panic (SSRI antidepressant)',unit:'mg',range:'20–50 mg once a day',maxDay:60,grp:'sero_ad',tags:['sero','bleed_mild','hypona','ssri','cyp2d6inh','anticholinergic'],
+ common:['nausea','drowsy','sweating','sexual','drymouth','constipation','wgain','dizzy','tremor'],
+ serious:['Thoughts of self-harm or suicide. Call 13 11 14 (Lifeline) or 000','Agitation, fever, sweating, twitching (serotonin syndrome)'],
+ tips:['Stopping suddenly causes strong withdrawal symptoms. Your doctor will reduce the dose slowly.']},
+{id:'venlafaxine',name:'Venlafaxine',brands:['Efexor-XR','Enlafax XR','Venlexor'],use:'Depression, anxiety, panic (SNRI antidepressant)',unit:'mg',range:'75–225 mg once a day (up to 375 mg)',maxDay:375,grp:'sero_ad',tags:['sero','bleed_mild','hypona'],
+ common:['nausea','sweating','headache','insomnia','drymouth','dizzy','constipation','sexual','bp_up'],
+ serious:['Thoughts of self-harm or suicide. Call 13 11 14 (Lifeline) or 000','Agitation, fever, sweating, twitching (serotonin syndrome)','Very high blood pressure: severe headache, chest pain'],
+ tips:['Missing doses can cause dizziness and "brain zaps". Don’t stop suddenly.']},
+{id:'desvenlafaxine',name:'Desvenlafaxine',brands:['Pristiq','Desfax','Elaxine'],use:'Depression (SNRI antidepressant)',unit:'mg',range:'50–200 mg once a day',maxDay:200,grp:'sero_ad',tags:['sero','bleed_mild','hypona'],
+ common:['nausea','sweating','headache','insomnia','drymouth','dizzy','constipation','sexual','bp_up'],
+ serious:['Thoughts of self-harm or suicide. Call 13 11 14 (Lifeline) or 000','Agitation, fever, sweating, twitching (serotonin syndrome)'],
+ tips:['Don’t stop suddenly.']},
+{id:'duloxetine',name:'Duloxetine',brands:['Cymbalta','Andepra','Coperin'],use:'Depression, anxiety, nerve pain (SNRI)',unit:'mg',range:'30–60 mg once a day (up to 120 mg)',maxDay:120,grp:'sero_ad',tags:['sero','bleed_mild','hypona'],
+ common:['nausea','drymouth','headache','drowsy','constipation','tired','insomnia','sweating','sexual','dizzy'],
+ serious:['Thoughts of self-harm or suicide. Call 13 11 14 (Lifeline) or 000','Yellow skin or eyes (liver problems)','Agitation, fever, sweating, twitching (serotonin syndrome)'],
+ tips:['Don’t stop suddenly.']},
+{id:'mirtazapine',name:'Mirtazapine',brands:['Avanza','Mirtazon','Axit'],use:'Depression, sometimes sleep (antidepressant)',unit:'mg',range:'15–45 mg at night',maxDay:45,tags:['sero_weak','sed'],
+ common:['drowsy','appetite_up','wgain','drymouth','dizzy','constipation'],
+ serious:['Fever, sore throat or mouth ulcers (rare low white cells)','Thoughts of self-harm or suicide. Call 13 11 14 (Lifeline) or 000'],
+ tips:['Take at bedtime. Lower doses are often more sedating.']},
+{id:'amitriptyline',name:'Amitriptyline',brands:['Endep','Entrip'],use:'Nerve pain, migraine prevention, sleep, depression (tricyclic)',unit:'mg',range:'10–75 mg at night for pain; up to 150 mg for depression',maxDay:150,tags:['sed','anticholinergic','sero_weak','qt','lowbp'],
+ common:['drowsy','drymouth','constipation','vision','wgain','dizzy','lightheaded','urine_retention','palpitations'],
+ serious:['Fast or irregular heartbeat, fainting','Can’t pass urine','Confusion, especially in older people','Thoughts of self-harm. Call 13 11 14 (Lifeline) or 000'],
+ tips:['Take 1–2 hours before bed to reduce morning drowsiness.','Dangerous in overdose. Store safely.']},
+{id:'quetiapine',name:'Quetiapine',brands:['Seroquel','Seroquel XR','Quetia','Delucon'],use:'Schizophrenia, bipolar disorder, add-on for depression (antipsychotic)',unit:'mg',range:'25–800 mg a day',maxDay:800,grp:'antipsych',tags:['sed','qt','anticholinergic','gluc_up','lowbp','antipsych'],
+ common:['drowsy','dizzy','lightheaded','drymouth','wgain','constipation','appetite_up'],
+ serious:['High fever, stiff muscles and confusion (rare)','Uncontrolled movements of the face or body','Very thirsty and passing lots of urine (high blood sugar)','Fainting or fast heartbeat'],
+ tips:['Regular checks of weight, blood sugar and cholesterol are recommended.']},
+{id:'olanzapine',name:'Olanzapine',brands:['Zyprexa','Zypine','Ozin'],use:'Schizophrenia, bipolar disorder (antipsychotic)',unit:'mg',range:'5–20 mg once a day',maxDay:20,grp:'antipsych',tags:['sed','anticholinergic','gluc_up','lowbp','antipsych'],
+ common:['drowsy','wgain','appetite_up','dizzy','drymouth','constipation','swelling'],
+ serious:['High fever, stiff muscles and confusion (rare)','Uncontrolled movements','Very thirsty and passing lots of urine (high blood sugar)'],
+ tips:['Weight gain is common. Regular checks of weight, sugar and cholesterol are recommended.']},
+{id:'aripiprazole',name:'Aripiprazole',brands:['Abilify','Aripiprazole Sandoz','Abilify Maintena (injection)'],use:'Schizophrenia, bipolar disorder (antipsychotic)',unit:'mg',range:'10–30 mg once a day',maxDay:30,grp:'antipsych',tags:['antipsych'],
+ common:['agitation','insomnia','nausea','headache','dizzy','drowsy'],
+ serious:['New urges you can’t control, such as gambling, shopping or eating','High fever, stiff muscles and confusion (rare)','Uncontrolled movements'],
+ tips:['Restlessness (an urge to keep moving) is common. Tell your doctor if it happens.']},
+{id:'lithium',name:'Lithium',brands:['Lithicarb','Quilonum SR'],use:'Bipolar disorder (mood stabiliser)',unit:'mg',range:'Individual; set by lithium blood levels',tags:['lithium','sero_weak'],
+ common:['tremor','thirst','urination','nausea','diarrhoea','wgain'],
+ serious:['Vomiting, diarrhoea, severe shaking, unsteadiness, slurred speech or confusion (lithium toxicity). Get help the same day'],
+ tips:['Drink enough fluid and keep your salt intake steady.','Regular blood tests check lithium level, kidney and thyroid.','Ask before taking anti-inflammatories like ibuprofen.']},
+{id:'diazepam',name:'Diazepam',brands:['Valium','Antenex','Ranzepam'],use:'Anxiety, muscle spasm, alcohol withdrawal (benzodiazepine)',unit:'mg',range:'2–30 mg a day',maxDay:40,grp:'benzo',tags:['sed','benzo'],
+ common:['drowsy','tired','dizzy','confusion'],
+ serious:['Slow or shallow breathing, can’t stay awake','Falls, especially in older people'],
+ tips:['Can cause dependence. Usually used short-term only.','Don’t drive if you feel drowsy, and avoid alcohol.']},
+{id:'temazepam',name:'Temazepam',brands:['Normison','Temaze'],use:'Short-term insomnia (benzodiazepine)',unit:'mg',range:'10–20 mg at bedtime',maxDay:30,grp:'benzo',tags:['sed','benzo'],
+ common:['drowsy','dizzy','tired','confusion'],
+ serious:['Slow or shallow breathing','Falls at night'],
+ tips:['For short-term use. Dependence can develop within weeks.']},
+{id:'alprazolam',name:'Alprazolam',brands:['Xanax','Kalma','Alprax'],use:'Anxiety, panic disorder (benzodiazepine)',unit:'mg',range:'0.5–4 mg a day (higher for panic, specialist only)',maxDay:10,grp:'benzo',tags:['sed','benzo'],
+ common:['drowsy','dizzy','tired','confusion'],
+ serious:['Slow or shallow breathing','Seizures if stopped suddenly'],
+ tips:['High risk of dependence. Never stop suddenly.']},
+{id:'zolpidem',name:'Zolpidem',brands:['Stilnox','Stilnox CR','Dormizol'],use:'Short-term insomnia',unit:'mg',range:'5–10 mg at bedtime',maxDay:10,tags:['sed'],
+ common:['drowsy','dizzy','headache','nausea','diarrhoea'],
+ serious:['Sleep-walking, sleep-driving, eating or other activities while not fully awake. Stop and tell your doctor'],
+ tips:['Take it only when you can stay in bed for 7–8 hours. Never take it with alcohol.']},
+{id:'methylphenidate',name:'Methylphenidate',brands:['Ritalin','Ritalin LA','Concerta','Artige'],use:'ADHD (stimulant)',unit:'mg',range:'10–60 mg a day (some long-acting forms up to 72 mg)',maxDay:72,grp:'stim',tags:['stim'],
+ common:['appetite_down','insomnia','headache','agitation','palpitations','wloss','indigestion','bp_up'],
+ serious:['Chest pain, fainting or a racing heartbeat','Seeing or hearing things, severe mood change'],
+ tips:['Take early in the day to help sleep.']},
+{id:'lisdexamfetamine',name:'Lisdexamfetamine',brands:['Vyvanse'],use:'ADHD, binge-eating disorder (stimulant)',unit:'mg',range:'30–70 mg once a day',maxDay:70,grp:'stim',tags:['stim','sero_weak'],
+ common:['appetite_down','insomnia','drymouth','headache','agitation','palpitations','wloss','bp_up'],
+ serious:['Chest pain, fainting or a racing heartbeat','Seeing or hearing things, severe mood change'],
+ tips:['Take in the morning.']},
+
+/* --- Pain and inflammation --- */
+{id:'paracetamol',name:'Paracetamol',brands:['Panadol','Panamax','Herron','Panadol Osteo','Panadeine (with codeine)'],use:'Pain and fever',unit:'mg',range:'500–1000 mg every 4–6 hours, max 4000 mg a day',maxDay:4000,grp:'paracetamol',tags:['paracetamol'],
+ common:[],
+ serious:['Taking more than the maximum can seriously damage the liver, even if you feel fine. Call 13 11 26 straight away','Rash or swelling (rare allergy)'],
+ tips:['Side effects are uncommon at normal doses.','Check other products (cold and flu, Panadeine Forte) as many also contain paracetamol.']},
+{id:'ibuprofen',name:'Ibuprofen',brands:['Nurofen','Advil','Brufen','Panafen'],use:'Pain, inflammation, fever (NSAID anti-inflammatory)',unit:'mg',range:'200–400 mg up to 3–4 times a day; max 1200 mg a day without a prescription, 2400 mg on prescription',maxDay:2400,grp:'nsaid',tags:['nsaid','bleed','gi'],
+ common:['indigestion','heartburn','nausea','diarrhoea','headache','dizzy','swelling'],
+ serious:['Black or bloody stools, vomiting blood (stomach bleeding)','Passing much less urine, swelling (kidney problems)','Chest pain, breathlessness (heart strain)','Wheezing (in some people with asthma)'],
+ tips:['Take with food, at the lowest dose and for the shortest time.']},
+{id:'naproxen',name:'Naproxen',brands:['Naprosyn','Naprogesic','Proxen SR','Anaprox'],use:'Pain, arthritis, period pain (NSAID)',unit:'mg',range:'500–1000 mg a day (up to 1250 mg)',maxDay:1250,grp:'nsaid',tags:['nsaid','bleed','gi'],
+ common:['indigestion','heartburn','nausea','headache','dizzy','swelling','drowsy'],
+ serious:['Black or bloody stools, vomiting blood','Passing much less urine, swelling (kidney problems)','Chest pain, breathlessness'],
+ tips:['Take with food.']},
+{id:'diclofenac',name:'Diclofenac',brands:['Voltaren','Fenac','Dinac','Arthrotec (with misoprostol)'],use:'Pain, arthritis (NSAID)',unit:'mg',range:'75–150 mg a day',maxDay:150,grp:'nsaid',tags:['nsaid','bleed','gi'],
+ common:['indigestion','heartburn','nausea','diarrhoea','headache','dizzy'],
+ serious:['Black or bloody stools, vomiting blood','Passing much less urine, swelling','Chest pain, breathlessness','Yellow skin or eyes'],
+ tips:['Voltaren gel on the skin has far fewer side effects than tablets.']},
+{id:'celecoxib',name:'Celecoxib',brands:['Celebrex','Celaxib','Celebrex'],use:'Arthritis, pain (COX-2 NSAID)',unit:'mg',range:'100–200 mg once or twice a day',maxDay:400,grp:'nsaid',tags:['nsaid','bleed','gi'],
+ common:['indigestion','diarrhoea','swelling','headache','dizzy'],
+ serious:['Black or bloody stools','Passing much less urine','Chest pain or stroke symptoms. Call 000'],
+ tips:['Gentler on the stomach than other NSAIDs but still affects the kidneys and heart.']},
+{id:'meloxicam',name:'Meloxicam',brands:['Mobic','Movalis','Moxicam'],use:'Arthritis (NSAID)',unit:'mg',range:'7.5–15 mg once a day',maxDay:15,grp:'nsaid',tags:['nsaid','bleed','gi'],
+ common:['indigestion','nausea','diarrhoea','swelling','headache'],
+ serious:['Black or bloody stools','Passing much less urine','Chest pain, breathlessness']},
+{id:'codeine',name:'Codeine',brands:['Panadeine Forte (with paracetamol)','Panalgesic','Mersyndol Forte (with paracetamol)'],use:'Pain (opioid). In Australia it is prescription only',unit:'mg',range:'30–60 mg every 4–6 hours, max 240 mg a day',maxDay:240,grp:'opioid',tags:['opioid','sed'],
+ common:['constipation','drowsy','nausea','dizzy','drymouth'],
+ serious:['Slow or shallow breathing, can’t stay awake. Call 000','Confusion'],
+ tips:['Panadeine Forte has 500 mg paracetamol in each tablet. Count it toward your paracetamol limit.','Some people turn codeine into morphine very quickly and can get side effects even at normal doses.','Can cause dependence.']},
+{id:'tramadol',name:'Tramadol',brands:['Tramal','Tramal SR','Zydol','Durotram XR'],use:'Moderate to severe pain (opioid)',unit:'mg',range:'50–400 mg a day',maxDay:400,grp:'opioid',tags:['opioid','sed','sero','seizure'],
+ common:['nausea','dizzy','constipation','drowsy','headache','sweating','drymouth'],
+ serious:['Slow or shallow breathing. Call 000','Fits (seizures)','Agitation, fever, sweating, twitching (serotonin syndrome)'],
+ tips:['Can cause dependence. Avoid alcohol.']},
+{id:'oxycodone',name:'Oxycodone',brands:['Endone','OxyContin','OxyNorm','Targin (with naloxone)'],use:'Severe pain (strong opioid)',unit:'mg',range:'Individual; depends on pain and opioid tolerance',grp:'opioid',tags:['opioid','sed'],
+ common:['constipation','nausea','drowsy','dizzy','itch','vomit','drymouth','sweating'],
+ serious:['Slow or shallow breathing, blue lips, can’t be woken. Call 000. Naloxone can reverse it','Severe confusion'],
+ tips:['Ask your pharmacist about free naloxone (Take Home Naloxone program).','Use a laxative to prevent constipation. Avoid alcohol.']},
+{id:'tapentadol',name:'Tapentadol',brands:['Palexia SR','Palexia IR'],use:'Severe pain (opioid)',unit:'mg',range:'50–500 mg a day',maxDay:500,grp:'opioid',tags:['opioid','sed','sero_weak'],
+ common:['nausea','dizzy','drowsy','constipation','headache'],
+ serious:['Slow or shallow breathing. Call 000','Fits (seizures)'],
+ tips:['Can cause dependence. Avoid alcohol.']},
+{id:'pregabalin',name:'Pregabalin',brands:['Lyrica','Pregabalin Sandoz','Lyptin'],use:'Nerve pain (gabapentinoid)',unit:'mg',range:'75–600 mg a day',maxDay:600,grp:'gaba',tags:['sed','gaba'],
+ common:['dizzy','drowsy','wgain','vision','swelling','confusion','drymouth'],
+ serious:['Slow or shallow breathing, especially with opioids','Swelling of the face or tongue','Thoughts of self-harm. Call 13 11 14 (Lifeline)'],
+ tips:['Can be misused. Don’t stop suddenly.']},
+{id:'gabapentin',name:'Gabapentin',brands:['Neurontin','Gabaran','Nupentin'],use:'Nerve pain, epilepsy (gabapentinoid)',unit:'mg',range:'300–3600 mg a day',maxDay:3600,grp:'gaba',tags:['sed','gaba'],
+ common:['dizzy','drowsy','tired','swelling','wgain'],
+ serious:['Slow or shallow breathing, especially with opioids','Thoughts of self-harm. Call 13 11 14 (Lifeline)'],
+ tips:['Don’t stop suddenly.']},
+
+/* --- Infections --- */
+{id:'amoxicillin',name:'Amoxicillin',brands:['Amoxil','Alphamox','Moxacin','Cilamox'],use:'Bacterial infections (penicillin antibiotic)',unit:'mg',range:'750–3000 mg a day',maxDay:4000,grp:'penicillin',tags:['abx'],
+ common:['diarrhoea','nausea','rash','thrush'],
+ serious:['Swelling of the face or throat, trouble breathing, widespread hives (allergy). Call 000','Severe, watery or bloody diarrhoea, even weeks after finishing'],
+ tips:['Tell your doctor if you’ve ever reacted to a penicillin.']},
+{id:'amoxiclav',name:'Amoxicillin + clavulanic acid',brands:['Augmentin Duo','Augmentin Duo Forte','Clamoxyl','Curam Duo'],use:'Bacterial infections (penicillin antibiotic)',unit:'mg',range:'Enter the amoxicillin amount, e.g. 875 mg twice a day',maxDay:3000,grp:'penicillin',tags:['abx'],
+ common:['diarrhoea','nausea','thrush','rash','vomit'],
+ serious:['Swelling of the face or throat, trouble breathing (allergy). Call 000','Severe or bloody diarrhoea','Yellow skin or eyes (rare)'],
+ tips:['Take at the start of a meal to reduce stomach upset.']},
+{id:'cefalexin',name:'Cefalexin',brands:['Keflex','Ialex','Cilex'],use:'Bacterial infections (cephalosporin antibiotic)',unit:'mg',range:'1000–4000 mg a day',maxDay:4000,tags:['abx'],
+ common:['diarrhoea','nausea','indigestion','rash','thrush'],
+ serious:['Swelling of the face or throat, trouble breathing (allergy). Call 000','Severe or bloody diarrhoea']},
+{id:'doxycycline',name:'Doxycycline',brands:['Doryx','Doxy','Doxylin','Frakas'],use:'Infections, acne, malaria prevention (tetracycline antibiotic)',unit:'mg',range:'50–200 mg a day',maxDay:200,tags:['abx'],
+ common:['nausea','heartburn','indigestion','sun','diarrhoea','thrush'],
+ serious:['Pain when swallowing or behind the breastbone (throat ulcer)','Severe headache with blurred vision (rare)','Severe sunburn'],
+ tips:['Swallow with a full glass of water while sitting or standing, and stay upright for 30 minutes.','Keep 2–3 hours apart from antacids, iron, calcium or zinc.','Use sunscreen.']},
+{id:'clarithromycin',name:'Clarithromycin',brands:['Klacid','Klaricid','Clarac'],use:'Chest and other infections (macrolide antibiotic)',unit:'mg',range:'500–1000 mg a day',maxDay:1000,tags:['abx','qt','cyp3a4inh'],
+ common:['taste','nausea','diarrhoea','indigestion','headache'],
+ serious:['Fainting or fast, irregular heartbeat','Severe or bloody diarrhoea','Yellow skin or eyes'],
+ tips:['Interacts with many medicines. Always tell the prescriber everything you take.']},
+{id:'roxithromycin',name:'Roxithromycin',brands:['Rulide','Roxar','Biaxsig'],use:'Chest and throat infections (macrolide antibiotic)',unit:'mg',range:'300 mg a day',maxDay:300,tags:['abx','qt'],
+ common:['nausea','diarrhoea','indigestion','rash'],
+ serious:['Fainting or fast, irregular heartbeat','Severe or bloody diarrhoea']},
+{id:'trimethoprim',name:'Trimethoprim',brands:['Alprim','Triprim','Bactrim (with sulfamethoxazole)'],use:'Urinary tract infections (antibiotic)',unit:'mg',range:'150–300 mg a day',maxDay:300,tags:['abx','hyperk'],
+ common:['itch','rash','nausea'],
+ serious:['Severe rash or blistering','Sore throat, fever, mouth ulcers (blood problems)','Muscle weakness or irregular heartbeat (high potassium)']},
+{id:'ciprofloxacin',name:'Ciprofloxacin',brands:['Ciproxin','Ciprol','Cipro'],use:'Serious or resistant infections (quinolone antibiotic)',unit:'mg',range:'500–1500 mg a day',maxDay:1500,tags:['abx','qt','quinolone'],
+ common:['nausea','diarrhoea','headache','dizzy','rash'],
+ serious:['Pain or swelling of a tendon, especially the heel (Achilles). Stop and rest it','Numbness, burning or tingling in hands or feet','Sudden severe chest, back or stomach pain (rare tear in the aorta). Call 000','Confusion, anxiety or mood changes'],
+ tips:['Keep 2 hours apart from antacids, calcium, iron, zinc and dairy on its own.']},
+{id:'fluconazole',name:'Fluconazole',brands:['Diflucan','Canesten Oral','Dizole'],use:'Thrush and other fungal infections',unit:'mg',range:'150 mg once for vaginal thrush; 50–400 mg a day for other infections',maxDay:800,tags:['qt','cyp_inh_azole'],
+ common:['headache','nausea','indigestion','diarrhoea','rash'],
+ serious:['Yellow skin or eyes','Severe rash or blistering','Fainting or irregular heartbeat']},
+{id:'metronidazole',name:'Metronidazole',brands:['Flagyl','Metrogyl','Flagyl S (liquid)'],use:'Bacterial and parasite infections',unit:'mg',range:'400 mg 2–3 times a day; 2 g once for some infections',maxDay:2000,tags:['abx'],
+ common:['taste','nausea','appetite_down','diarrhoea','headache'],
+ serious:['Numbness or tingling in hands or feet','Fits or severe unsteadiness'],
+ tips:['Don’t drink alcohol while taking it and for at least 24 hours (many pharmacists say 72 hours) after the last dose. It can cause severe flushing, vomiting and a racing heart.']},
+
+/* --- Hormones, bones, gout, immune --- */
+{id:'levothyroxine',name:'Levothyroxine (thyroxine)',brands:['Eutroxsig','Oroxine','Eltroxin'],use:'Underactive thyroid',unit:'mcg',range:'25–200 mcg once a day',maxDay:300,tags:[],
+ common:[],
+ serious:['Chest pain, racing or irregular heartbeat (dose too high)'],
+ tips:['Side effects usually mean the dose is too high: palpitations, sweating, shaking, trouble sleeping, weight loss. Your doctor checks this with blood tests.','Take on an empty stomach, 30–60 minutes before breakfast.','Keep 4 hours apart from calcium and iron supplements.']},
+{id:'prednisolone',name:'Prednisolone / prednisone',brands:['Panafcortelone','Solone','Predsolone','Redipred (liquid)','Sone (prednisone)'],use:'Inflammation, asthma flares, arthritis, autoimmune conditions (corticosteroid)',unit:'mg',range:'5–60 mg a day, depending on the condition',tags:['gi_mild','gluc_up','steroid'],
+ common:['appetite_up','wgain','insomnia','mood','indigestion','swelling'],
+ serious:['Signs of infection: fever, chills, sore throat','Very thirsty and passing lots of urine (high blood sugar)','Severe mood change, feeling high or very low','Black stools (stomach bleeding)'],
+ tips:['Take in the morning with food.','If you’ve taken it for more than 2–3 weeks, don’t stop suddenly. The dose needs to be reduced slowly.','Long-term use can thin bones. Ask about bone health.']},
+{id:'allopurinol',name:'Allopurinol',brands:['Zyloprim','Progout','Allosig'],use:'Prevents gout attacks and kidney stones',unit:'mg',range:'100–600 mg a day (up to 900 mg)',maxDay:900,tags:[],
+ common:['rash','nausea','diarrhoea'],
+ serious:['Any skin rash, especially with fever, blisters or mouth sores (rare severe skin reaction). Stop and see a doctor straight away'],
+ tips:['Gout flares can happen when you first start. Keep taking it unless your doctor says otherwise.']},
+{id:'colchicine',name:'Colchicine',brands:['Colgout','Lengout'],use:'Gout attacks, prevents gout flares',unit:'mg',range:'0.5–1 mg a day to prevent flares; for a flare, 1 mg then 0.5 mg 1 hour later',maxDay:1.5,tags:['colchicine'],
+ common:['diarrhoea','nausea','vomit','indigestion'],
+ serious:['Severe diarrhoea or vomiting, muscle weakness or pain, numbness (toxicity)','Unusual bleeding, sore throat, fever'],
+ tips:['Narrow safety margin. Never take more than prescribed.']},
+{id:'methotrexate',name:'Methotrexate',brands:['Methoblastin','Trexject (injection)','Metoject (injection)'],use:'Rheumatoid arthritis, psoriasis, Crohn’s (ONCE A WEEK)',unit:'mg',range:'5–25 mg ONCE A WEEK (taken on the same day each week)',maxWeek:30,weekly:true,weeklyOnly:true,tags:['mtx'],
+ common:['nausea','tired','mouth','hair','appetite_down','diarrhoea'],
+ serious:['Mouth ulcers, sore throat, fever or other signs of infection','New cough or breathlessness','Unusual bruising or bleeding','Yellow skin or eyes'],
+ tips:['It is taken ONCE A WEEK, not every day. Taking it daily by mistake can be fatal.','Folic acid on other days reduces side effects.','Regular blood tests are needed. Limit alcohol.']},
+{id:'alendronate',name:'Alendronate',brands:['Fosamax','Fosamax Plus (with vitamin D)','Alendro'],use:'Osteoporosis (bisphosphonate)',unit:'mg',range:'70 mg once a week (or 10 mg daily)',maxWeek:70,weekly:true,tags:[],
+ common:['indigestion','heartburn','muscle','joint','indigestion'],
+ serious:['Pain or difficulty swallowing, chest pain (throat irritation)','Jaw pain or a dental wound that won’t heal','New thigh or groin pain'],
+ tips:['Take first thing in the morning with a full glass of plain water, at least 30 minutes before food. Stay upright for 30 minutes.']},
+{id:'coc',name:'Combined oral contraceptive pill',brands:['Levlen ED','Microgynon','Loette','Yaz','Yasmin','Diane-35','Brenda-35','Femoden ED','NuvaRing (vaginal ring)'],use:'Contraception, period control, acne',unit:null,range:'One tablet a day as directed on the pack',tags:['estrogen'],
+ common:['nausea','headache','breast','spotting','mood'],
+ serious:['Painful, swollen calf, sudden breathlessness or chest pain (blood clot). Call 000','Sudden severe headache, vision loss or weakness (stroke). Call 000','Yellow skin or eyes'],
+ tips:['Smoking (especially over 35) and migraine with aura raise the clot risk. Tell your doctor.']},
+{id:'finasteride',name:'Finasteride',brands:['Proscar','Propecia','Finpro'],use:'Enlarged prostate (5 mg), hair loss (1 mg)',unit:'mg',range:'1–5 mg once a day',maxDay:5,tags:[],
+ common:['sexual','breast'],
+ serious:['Breast lumps or nipple discharge','Low mood or thoughts of self-harm. Call 13 11 14 (Lifeline)'],
+ tips:['Women who are or may become pregnant should not handle crushed or broken tablets.']},
+{id:'tamsulosin',name:'Tamsulosin',brands:['Flomaxtra','Tamsul','Duodart (with dutasteride)'],use:'Enlarged prostate (alpha blocker)',unit:'mg',range:'0.4 mg once a day',maxDay:0.4,tags:['lowbp','alpha'],
+ common:['dizzy','lightheaded','sexual','nose','headache'],
+ serious:['Fainting','Erection lasting more than 4 hours'],
+ tips:['Tell your eye surgeon before cataract surgery.']},
+{id:'oxybutynin',name:'Oxybutynin',brands:['Ditropan','Oxytrol (patch)'],use:'Overactive bladder',unit:'mg',range:'5–15 mg a day (up to 20 mg)',maxDay:20,tags:['anticholinergic','mildsed'],
+ common:['drymouth','constipation','vision','drowsy','dizzy','urine_retention','confusion'],
+ serious:['Can’t pass urine','Confusion or memory problems, especially in older people','Overheating in hot weather (reduced sweating)']},
+{id:'sildenafil',name:'Sildenafil',brands:['Viagra','Silden','Revatio (lung blood pressure)'],use:'Erectile dysfunction (PDE5 inhibitor)',unit:'mg',range:'25–100 mg when needed, max once a day',maxDay:100,grp:'pde5',tags:['pde5','lowbp'],
+ common:['headache','flushing','indigestion','nose','dizzy','vision'],
+ serious:['Erection lasting more than 4 hours','Sudden loss of vision or hearing','Chest pain during sex. Don’t use GTN spray, and call 000'],
+ tips:['Never use with nitrate medicines such as GTN spray or Imdur.']},
+{id:'tadalafil',name:'Tadalafil',brands:['Cialis','Tadalis','Adcirca'],use:'Erectile dysfunction, enlarged prostate (PDE5 inhibitor)',unit:'mg',range:'2.5–5 mg daily, or 10–20 mg when needed',maxDay:20,grp:'pde5',tags:['pde5','lowbp'],
+ common:['headache','indigestion','muscle','flushing','nose'],
+ serious:['Erection lasting more than 4 hours','Sudden loss of vision or hearing','Chest pain'],
+ tips:['Never use with nitrates. It lasts up to 48 hours.']},
+
+/* --- Allergy, breathing, other --- */
+{id:'cetirizine',name:'Cetirizine',brands:['Zyrtec','Zilarex','Histaclear'],use:'Hay fever, hives (antihistamine)',unit:'mg',range:'10 mg once a day',maxDay:10,tags:[],
+ common:['drowsy','drymouth','headache','tired'],
+ serious:['Difficulty passing urine (rare)'],
+ tips:['Usually only mildly drowsy, but it can add to other sedating medicines or alcohol.']},
+{id:'loratadine',name:'Loratadine',brands:['Claratyne','Lorastyne','Lorano'],use:'Hay fever, hives (antihistamine)',unit:'mg',range:'10 mg once a day',maxDay:10,tags:[],
+ common:['headache','drymouth','tired'],
+ serious:['Fast heartbeat or fainting (rare)']},
+{id:'promethazine',name:'Promethazine',brands:['Phenergan','Avomine'],use:'Allergy, nausea, travel sickness, short-term sleep (sedating antihistamine)',unit:'mg',range:'10–50 mg a day',maxDay:100,tags:['sed','anticholinergic'],
+ common:['drowsy','drymouth','vision','dizzy','confusion','constipation','urine_retention'],
+ serious:['Slow breathing (especially with opioids)','Can’t pass urine','Fits'],
+ tips:['Not for children under 2. Drowsiness can last into the next day.']},
+{id:'salbutamol',name:'Salbutamol',brands:['Ventolin','Asmol','Airomir'],use:'Quick asthma relief (reliever puffer)',unit:'mcg',range:'100–200 mcg (1–2 puffs) when needed',tags:[],
+ common:['tremor','palpitations','headache','agitation'],
+ serious:['Needing your reliever more than usual, or it doesn’t help. Follow your asthma action plan or call 000'],
+ tips:['Needing it more than 2 days a week means your asthma isn’t well controlled. See your doctor.']},
+{id:'symbicort',name:'Budesonide + formoterol',brands:['Symbicort','DuoResp Spiromax','Rilast'],use:'Asthma and COPD preventer and reliever',unit:'mcg',range:'1–2 inhalations twice a day, plus extra when needed (as per action plan)',tags:[],
+ common:['hoarse','thrush','headache','tremor','palpitations'],
+ serious:['Breathing worse after use (rare)','Asthma not controlled. Follow your action plan'],
+ tips:['Rinse your mouth and spit after each use to prevent thrush.']},
+{id:'montelukast',name:'Montelukast',brands:['Singulair','Lukair','Montelair'],use:'Asthma prevention, hay fever',unit:'mg',range:'10 mg at night (adults)',maxDay:10,tags:[],
+ common:['headache','indigestion','nightmares'],
+ serious:['Mood or behaviour changes, agitation, depression, sleep-walking or thoughts of self-harm. Stop and see your doctor (TGA boxed warning)']},
+{id:'sumatriptan',name:'Sumatriptan',brands:['Imigran','Suvalan','Sumatab'],use:'Migraine attacks (triptan)',unit:'mg',range:'50–100 mg per attack, max 300 mg a day',maxDay:300,tags:['sero_weak'],
+ common:['chest','flushing','dizzy','drowsy','nausea','tired'],
+ serious:['Chest pain that is severe or doesn’t go away. Call 000','Sudden severe stomach pain'],
+ tips:['Frequent use (10 or more days a month) can cause medication-overuse headache.']},
+
+/* --- Epilepsy --- */
+{id:'levetiracetam',name:'Levetiracetam',brands:['Keppra','Kerron','Levecetam'],use:'Epilepsy',unit:'mg',range:'1000–3000 mg a day',maxDay:3000,tags:['sed'],
+ common:['drowsy','tired','dizzy','mood','headache'],
+ serious:['Aggression, depression or thoughts of self-harm. Call 13 11 14 (Lifeline)','More seizures'],
+ tips:['Don’t stop suddenly. This can trigger seizures.']},
+{id:'valproate',name:'Sodium valproate',brands:['Epilim','Valpro','Valprease'],use:'Epilepsy, bipolar disorder',unit:'mg',range:'Individual, by body weight and blood levels',tags:['valproate'],
+ common:['nausea','tremor','wgain','hair','drowsy','indigestion'],
+ serious:['Vomiting, severe tiredness, yellow skin (liver damage)','Severe stomach pain (pancreatitis)','Unusual bruising','Pregnancy: high risk of birth defects. Discuss contraception and pregnancy plans with your doctor'],
+ tips:['Don’t stop suddenly. Don’t stop because of pregnancy without talking to your doctor.']},
+{id:'carbamazepine',name:'Carbamazepine',brands:['Tegretol','Tegretol CR','Teril'],use:'Epilepsy, nerve pain (trigeminal neuralgia), bipolar disorder',unit:'mg',range:'200–1600 mg a day',maxDay:1600,tags:['inducer','hypona','sed'],
+ common:['dizzy','drowsy','nausea','vision','rash'],
+ serious:['Rash with fever, blisters or mouth sores (rare severe skin reaction). People of Han Chinese, Thai or Malaysian ancestry may need a gene test first','Confusion, headache, fits (low sodium)','Sore throat, fever, bruising (blood problems)'],
+ tips:['It reduces the effect of many other medicines, including the contraceptive pill.']},
+{id:'lamotrigine',name:'Lamotrigine',brands:['Lamictal','Lamidus','Lamogine'],use:'Epilepsy, bipolar depression',unit:'mg',range:'100–500 mg a day (dose depends on other medicines)',maxDay:700,tags:[],
+ common:['headache','dizzy','rash','nausea','drowsy','vision','insomnia'],
+ serious:['Any rash, especially in the first 8 weeks or with fever, blisters or mouth sores. See a doctor straight away'],
+ tips:['The dose must be increased slowly to reduce rash risk.']},
+
+/* --- Complementary --- */
+{id:'stjohns',name:'St John’s wort (herbal)',brands:['Hypericum','Various herbal products'],use:'Herbal remedy taken for low mood',unit:null,range:'Varies by product',tags:['sero','inducer'],
+ common:['indigestion','tired','dizzy','sun','drymouth'],
+ serious:['Agitation, fever, sweating, twitching (serotonin syndrome) with antidepressants'],
+ tips:['It reduces the effect of many prescription medicines. Always tell your doctor and pharmacist you take it.']}
+];
+
+/* ------------------------------------------------------------------ */
+/* Combination rules.                                                 */
+/* sel: '#id', 'tag:name' or 'grp:name'                               */
+/* ------------------------------------------------------------------ */
+const PAIRS = [
+ {a:['tag:nitrate'],b:['tag:pde5'],sev:'avoid',title:'Dangerous drop in blood pressure',
+  text:'Nitrates (angina medicines) and erectile dysfunction medicines together can drop blood pressure suddenly and severely, causing fainting, heart attack or stroke. They must not be used together. Tadalafil lasts up to 48 hours.'},
+ {a:['#simvastatin'],b:['#clarithromycin'],sev:'avoid',title:'High risk of muscle damage',
+  text:'Clarithromycin greatly raises simvastatin levels, which can cause serious muscle breakdown. Simvastatin is usually paused during the antibiotic course.'},
+ {a:['#colchicine'],b:['#clarithromycin'],sev:'avoid',title:'Colchicine toxicity',
+  text:'Clarithromycin stops the body clearing colchicine. Deaths have been reported. Colchicine is usually paused or a different antibiotic is chosen.'},
+ {a:['#methotrexate'],b:['#trimethoprim'],sev:'avoid',title:'Methotrexate toxicity',
+  text:'Trimethoprim adds to methotrexate’s effect on the bone marrow, which can cause dangerously low blood counts. Another antibiotic is usually used.'},
+ {a:['#simvastatin'],b:['#amiodarone','#diltiazem','#verapamil'],sev:'major',title:'Higher statin levels, muscle risk',
+  text:'This raises simvastatin levels. The simvastatin dose is usually limited (often to 10–20 mg), or another statin is used. Report unexplained muscle pain.'},
+ {a:['#atorvastatin'],b:['#clarithromycin'],sev:'moderate',title:'Higher statin levels',
+  text:'Clarithromycin raises atorvastatin levels. Your doctor may lower the atorvastatin dose or pause it during the antibiotic. Watch for muscle pain.'},
+ {a:['tag:statin'],b:['#colchicine'],sev:'moderate',title:'Muscle problems',
+  text:'Both can occasionally affect muscles. Together the risk is a little higher. Report muscle pain or weakness.'},
+ {a:['#colchicine'],b:['#diltiazem','#verapamil'],sev:'major',title:'Higher colchicine levels',
+  text:'These heart medicines slow the clearance of colchicine. A lower colchicine dose is usually needed.'},
+ {a:['#warfarin'],b:['#amiodarone','#fluconazole','#metronidazole','#clarithromycin','#roxithromycin','#ciprofloxacin','#trimethoprim'],sev:'major',title:'Warfarin effect increased, bleeding risk',
+  text:'This medicine can raise your INR, so warfarin works more strongly and bleeding is more likely. You usually need an extra INR test within a few days of starting or stopping it.'},
+ {a:['#warfarin','#apixaban','#rivaroxaban'],b:['#carbamazepine','#stjohns'],sev:'major',title:'Blood thinner may stop working properly',
+  text:'This speeds up how fast your body clears the blood thinner, which can raise the risk of clots or stroke. Stopping it later can then cause bleeding.'},
+ {a:['#apixaban','#rivaroxaban'],b:['#clarithromycin'],sev:'moderate',title:'Higher blood thinner levels',
+  text:'Clarithromycin can raise apixaban or rivaroxaban levels and increase bleeding risk. Watch for bruising or bleeding.'},
+ {a:['#clopidogrel'],b:['#omeprazole','#esomeprazole'],sev:'moderate',title:'Clopidogrel may work less well',
+  text:'Omeprazole and esomeprazole can reduce the activation of clopidogrel. Pantoprazole is usually preferred if you need stomach protection.'},
+ {a:['#methotrexate'],b:['tag:nsaid'],sev:'moderate',title:'Higher methotrexate levels',
+  text:'Anti-inflammatories can reduce how the kidneys clear methotrexate. This is usually OK with low weekly doses and blood monitoring, but tell your doctor if you use them regularly.'},
+ {a:['#lithium'],b:['tag:nsaid','tag:raas','tag:diuretic'],sev:'major',title:'Lithium toxicity',
+  text:'This can raise lithium levels in the blood, sometimes to toxic levels. You may need an extra lithium blood test. Watch for shaking, vomiting, diarrhoea, unsteadiness or confusion.'},
+ {a:['#digoxin'],b:['#amiodarone','#verapamil','#clarithromycin','#diltiazem'],sev:'major',title:'Higher digoxin levels',
+  text:'This raises digoxin levels. The digoxin dose often needs to be reduced. Watch for nausea, vision changes, confusion or a slow pulse.'},
+ {a:['#digoxin'],b:['tag:lowk'],sev:'moderate',title:'Low potassium increases digoxin side effects',
+  text:'Fluid tablets can lower potassium, which makes digoxin toxicity more likely. Regular blood tests help.'},
+ {a:['tag:beta'],b:['#verapamil'],sev:'major',title:'Heart rate may become too slow',
+  text:'Verapamil and beta blockers both slow the heart and its pumping. Together they can cause a very slow heart rate or heart failure. They are only used together with close supervision.'},
+ {a:['#fluoxetine','#paroxetine'],b:['#metoprolol'],sev:'moderate',title:'Higher metoprolol levels',
+  text:'This antidepressant blocks the breakdown of metoprolol, which can slow your heart more. Bisoprolol is less affected. Tell your doctor if you feel dizzy or faint.'},
+ {a:['#carbamazepine','#stjohns'],b:['#coc'],sev:'major',title:'Contraceptive pill may fail',
+  text:'This speeds up how fast your body clears the pill’s hormones, so pregnancy can occur. Use another reliable method, such as an IUD, implant or injection. Ask your doctor.'},
+ {a:['#lamotrigine'],b:['#coc'],sev:'moderate',title:'Lamotrigine levels change',
+  text:'The pill lowers lamotrigine levels, so seizures or mood symptoms can come back. Levels rise again in the pill-free week. Your doctor may adjust the dose.'},
+ {a:['#valproate'],b:['#lamotrigine'],sev:'major',title:'Higher lamotrigine levels, rash risk',
+  text:'Valproate roughly doubles lamotrigine levels. Lamotrigine must be started at a much lower dose to reduce the risk of serious rash.'},
+ {a:['#carbamazepine'],b:['#quetiapine','#lamotrigine','#sertraline','#escitalopram','#citalopram','#aripiprazole'],sev:'moderate',title:'Other medicine may work less well',
+  text:'Carbamazepine speeds up the breakdown of this medicine, which may reduce its effect. Dose changes may be needed.'},
+ {a:['#ciprofloxacin'],b:['#prednisolone'],sev:'moderate',title:'Tendon damage',
+  text:'Quinolone antibiotics and steroids together raise the risk of tendon inflammation or rupture, especially over age 60. Stop and seek advice if a tendon becomes painful.'},
+ {a:['#fluconazole','#clarithromycin'],b:['#gliclazide'],sev:'moderate',title:'Low blood sugar',
+  text:'This can raise gliclazide levels and cause low blood sugar. Check your sugar levels more often.'},
+ {a:['tag:sglt2'],b:['#furosemide'],sev:'moderate',title:'Dehydration and low blood pressure',
+  text:'Both make you pass more fluid. Together they can cause dehydration or dizziness, especially in hot weather or when unwell.'},
+ {a:['tag:gluc_up'],b:['tag:diabetes'],sev:'moderate',title:'Blood sugar may rise',
+  text:'This medicine can raise blood sugar, which works against your diabetes medicine. Check your sugar levels more often, especially when starting or changing the dose.'},
+ {a:['#aspirin'],b:['tag:nsaid'],sev:'moderate',title:'Stomach bleeding, less heart protection',
+  text:'Aspirin plus another anti-inflammatory raises the risk of stomach ulcers and bleeding. Ibuprofen can also block low-dose aspirin’s heart-protecting effect, so take aspirin at least 30 minutes before ibuprofen. Ask your pharmacist.'},
+ {a:['tag:nsaid'],b:['#prednisolone'],sev:'moderate',title:'Stomach ulcers and bleeding',
+  text:'Anti-inflammatories and steroids together raise the risk of stomach ulcers. A stomach-protecting medicine (PPI) is often added.'},
+ {a:['#metoclopramide'],b:['tag:antipsych'],sev:'moderate',title:'Movement side effects',
+  text:'Both block dopamine, which raises the risk of stiffness, restlessness and uncontrolled movements.'},
+ {a:['tag:pde5'],b:['tag:alpha'],sev:'moderate',title:'Low blood pressure',
+  text:'Both lower blood pressure. Dizziness or fainting is more likely, especially when standing. Start with a low dose and take them at different times.'},
+ {a:['#metformin'],b:['#furosemide'],sev:'minor',title:'Dehydration affects metformin',
+  text:'If you become dehydrated, metformin can build up. Follow your sick day plan if you have vomiting or diarrhoea.'},
+ {a:['#levothyroxine'],b:['tag:ppi'],sev:'minor',title:'Thyroxine absorption',
+  text:'Long-term stomach acid medicines can slightly reduce thyroxine absorption. Your doctor can check your thyroid levels.'},
+ {a:['#warfarin'],b:['#paracetamol'],sev:'minor',title:'Regular paracetamol can raise INR',
+  text:'Occasional paracetamol is the preferred pain reliever with warfarin. Taking full doses regularly for several days can raise your INR, so tell the clinic.'}
+];
+
+/* Rules that look at how many medicines share a property. */
+const TAG_RULES = [
+ {key:'sero', tags:['sero','sero_weak'], min:2, title:'Serotonin syndrome',
+  sev:ms=>ms.filter(m=>has(m,'sero')).length>=2?'major':'moderate',
+  text:'These medicines all raise serotonin. Together they can cause serotonin syndrome: agitation, confusion, sweating, shivering, fast heartbeat, muscle twitching or stiffness, and high temperature. Seek urgent help if this happens, especially after a new medicine or dose increase. Many people take some of these together safely with their doctor’s guidance.'},
+ {key:'sed', tags:['sed','opioid','mildsed'], min:2, title:'Extra drowsiness and slowed breathing',
+  sev:ms=>{const o=ms.some(m=>has(m,'opioid')); const other=ms.some(m=>!has(m,'opioid')&&(has(m,'benzo')||has(m,'gaba')||has(m,'sed')));
+           return (o&&other)?'major':(ms.filter(m=>has(m,'opioid')).length>=2?'major':'moderate');},
+  text:'Each of these can cause drowsiness. Together the effect adds up: more sleepiness, slower reactions, falls and, with opioids, dangerously slow breathing. The TGA warns specifically about combining opioids with benzodiazepines, gabapentinoids and other sedatives. Avoid alcohol. Don’t drive until you know how you’re affected. If you take an opioid, keep naloxone at home.'},
+ {key:'bleed', tags:['bleed','bleed_mild'], min:2, title:'Bleeding risk',
+  sev:ms=>{if(ms.some(m=>has(m,'anticoag'))) return 'major'; const strong=ms.filter(m=>has(m,'bleed')).length; return strong>=2?'major':'moderate';},
+  text:'Each of these affects blood clotting or the stomach lining. Together, bleeding is more likely: bruising, nosebleeds, bleeding gums, and stomach bleeding (black or bloody stools, vomiting blood). Sometimes the combination is intended, for example after a heart stent. Don’t add over-the-counter anti-inflammatories without checking with a pharmacist.'},
+ {key:'qt', tags:['qt'], min:2, title:'Heart rhythm (QT prolongation)',
+  sev:()=> 'major',
+  text:'Each of these can affect the heart’s electrical rhythm (the QT interval). Together they raise the risk of a dangerous irregular heartbeat. Your doctor may check an ECG and your potassium and magnesium. Seek help for fainting, palpitations or seizures.'},
+ {key:'hyperk', tags:['hyperk'], min:2, title:'High potassium',
+  sev:ms=>ms.some(m=>m.id==='spironolactone')?'major':'moderate',
+  text:'Each of these can raise potassium in the blood. Too much potassium can cause muscle weakness and a dangerous heart rhythm. Regular blood tests are important. Avoid potassium supplements and salt substitutes unless your doctor says otherwise.'},
+ {key:'brady', tags:['brady'], min:2, title:'Slow heart rate',
+  sev:()=> 'moderate',
+  text:'Each of these slows the heart. Together the heart rate can get too slow, causing dizziness, tiredness or fainting. Tell your doctor if your pulse is regularly under 50, or if you faint.'},
+ {key:'anticholinergic', tags:['anticholinergic'], min:2, title:'Anticholinergic load',
+  sev:()=> 'moderate',
+  text:'These medicines have "anticholinergic" effects: dry mouth, constipation, blurred vision, difficulty passing urine, and confusion or memory problems. The effects add up, and older people are especially at risk. Ask whether an alternative is possible.'},
+ {key:'hypona', tags:['hypona'], min:2, title:'Low sodium (salt) levels',
+  sev:()=> 'moderate',
+  text:'Each of these can lower sodium in the blood, especially in older people. Symptoms include headache, nausea, confusion, unsteadiness and, in severe cases, seizures. A blood test can check it.'},
+ {key:'lowbp', tags:['lowbp'], min:3, title:'Low blood pressure, dizziness and falls',
+  sev:()=> 'moderate',
+  text:'Several of your medicines lower blood pressure. This is often intended, but together they can cause light-headedness when standing, dizziness and falls. Stand up slowly and drink enough fluids. Tell your doctor if you feel faint.'},
+ {key:'hypo', tags:['hypo'], min:2, title:'Low blood sugar',
+  sev:()=> 'moderate',
+  text:'More than one of your medicines can cause low blood sugar. Check your sugar regularly and carry fast-acting sugar.'},
+];
+
+const GROUP_NAMES = {statin:'statins (cholesterol)',raas:'medicines that block the renin–angiotensin system (ACE inhibitors / ARBs)',anticoag:'anticoagulants (blood thinners)',antiplatelet:'antiplatelets',nsaid:'anti-inflammatories (NSAIDs)',ppi:'stomach acid medicines (PPIs)',sero_ad:'serotonin antidepressants (SSRIs/SNRIs)',benzo:'benzodiazepines',opioid:'opioid pain medicines',gaba:'gabapentinoids',sglt2:'SGLT2 inhibitors',antipsych:'antipsychotics',beta:'beta blockers',dhp:'calcium channel blockers',nitrate:'nitrates',pde5:'PDE5 inhibitors',stim:'stimulants',penicillin:'penicillins',paracetamol:'paracetamol products'};
+const GROUP_SEV = {anticoag:'major',raas:'major',nsaid:'major',paracetamol:'major',opioid:'major',sero_ad:'major',benzo:'major'};
+const GROUP_TEXT = {
+ raas:'Using an ACE inhibitor and an ARB together (or two of either) is generally not recommended. It raises the risk of kidney problems, high potassium and low blood pressure without much extra benefit.',
+ anticoag:'Two anticoagulants together greatly increase bleeding risk. This is usually only done briefly while switching from one to another under medical supervision.',
+ nsaid:'Two anti-inflammatories together give no extra pain relief but double the risk of stomach bleeding, kidney and heart problems. Use only one.',
+ paracetamol:'Two paracetamol products together can easily take you over the 4 g daily limit and cause liver damage.',
+ opioid:'Two opioids together add up the risk of drowsiness and slowed breathing. Sometimes a long-acting and a short-acting opioid are prescribed together on purpose. Check that this is intended.',
+ sero_ad:'Two serotonin antidepressants together are unusual and raise the risk of serotonin syndrome. Check that this is intended, for example while switching from one to another.',
+ benzo:'Two benzodiazepines together increase drowsiness, falls and dependence.'
+};
+
+/* ------------------------------------------------------------------ */
+/* Engine                                                             */
+/* ------------------------------------------------------------------ */
+const BY_ID = Object.fromEntries(MEDS.map(m=>[m.id,m]));
+function has(m,tag){return m.tags.includes(tag)}
+function matches(m,sel){
+  if(sel[0]==='#') return m.id===sel.slice(1);
+  if(sel.startsWith('tag:')) return has(m,sel.slice(4));
+  if(sel.startsWith('grp:')) return m.grp===sel.slice(4);
+  return false;
+}
+const SEV_ORDER = {avoid:0,major:1,moderate:2,minor:3};
+
+function checkCombos(meds){
+  const out=[];
+  const seenPair=new Set();
+  // Pairwise rules
+  for(const r of PAIRS){
+    const A=meds.filter(m=>r.a.some(s=>matches(m,s)));
+    const B=meds.filter(m=>r.b.some(s=>matches(m,s)));
+    for(const a of A) for(const b of B){
+      if(a.id===b.id) continue;
+      const key=r.title+'|'+[a.id,b.id].sort().join('+');
+      if(seenPair.has(key)) continue;
+      seenPair.add(key);
+      out.push({sev:r.sev,title:r.title,text:r.text,who:[a,b]});
+    }
+  }
+  // Triple whammy (ACEi/ARB + diuretic + NSAID)
+  const raas=meds.filter(m=>has(m,'raas')), diu=meds.filter(m=>has(m,'diuretic')), ns=meds.filter(m=>has(m,'nsaid'));
+  if(raas.length&&diu.length&&ns.length){
+    out.push({sev:'major',title:'"Triple whammy": kidney injury',who:[...raas,...diu,...ns],
+      text:'An ACE inhibitor or ARB, plus a fluid tablet, plus an anti-inflammatory (NSAID) is a well-known combination that can cause sudden kidney damage, especially if you become dehydrated. Ask your doctor or pharmacist before using anti-inflammatories. Paracetamol is usually a safer pain reliever.'});
+  } else if(ns.length&&(raas.length||diu.length)){
+    out.push({sev:'moderate',title:'Kidneys and blood pressure',who:[...ns,...raas,...diu],
+      text:'Anti-inflammatories can raise blood pressure, reduce the effect of blood pressure and fluid medicines, and strain the kidneys, especially if you are dehydrated or older. Use the lowest dose for the shortest time.'});
+  }
+  // Shared-property rules
+  for(const r of TAG_RULES){
+    const ms=meds.filter(m=>r.tags.some(t=>has(m,t)));
+    if(ms.length>=r.min) out.push({sev:r.sev(ms),title:r.title,text:r.text,who:ms});
+  }
+  // Same-group duplicates
+  const groups={};
+  for(const m of meds) if(m.grp){(groups[m.grp]=groups[m.grp]||[]).push(m)}
+  for(const [g,ms] of Object.entries(groups)){
+    if(ms.length<2) continue;
+    out.push({sev:GROUP_SEV[g]||'moderate',title:'Two '+(GROUP_NAMES[g]||'medicines from the same group'),who:ms,
+      text:GROUP_TEXT[g]||'These medicines are from the same group and do similar things. Taking both is usually not needed and adds up the side effects, unless your doctor has prescribed both on purpose. Check whether one replaced the other.'});
+  }
+  out.sort((x,y)=>SEV_ORDER[x.sev]-SEV_ORDER[y.sev]);
+  return out;
+}
+
+function sharedEffects(meds){
+  const map={};
+  for(const m of meds) for(const k of new Set(m.common)){(map[k]=map[k]||[]).push(m)}
+  return Object.entries(map).filter(([,ms])=>ms.length>=2).sort((a,b)=>b[1].length-a[1].length||SE[a[0]].localeCompare(SE[b[0]]));
+}
+
+const TO_MG={mg:1,mcg:0.001,g:1000};
+function doseCheck(entry){
+  const m=BY_ID[entry.id]; if(!m) return null;
+  const res={lines:[],warn:false};
+  if(m.weeklyOnly && entry.freq!=='w' && entry.freq!==''){
+    res.warn=true;
+    res.lines.push('⚠️ '+m.name+' is normally taken ONCE A WEEK, not daily. Taking it daily can be fatal. Check your label and confirm with your pharmacist today.');
+  }
+  if(!entry.amt||!m.unit||m.unit==='units'||entry.unit==='units'||!TO_MG[entry.unit]||!TO_MG[m.unit]) return res;
+  const perDose=entry.amt*TO_MG[entry.unit]/TO_MG[m.unit];
+  const times = entry.freq==='w'?null : entry.freq==='prn' ? (entry.prnmax||1) : Number(entry.freq);
+  const fmt=v=>(Math.round(v*1000)/1000).toLocaleString('en-AU');
+  if(times===null){
+    res.lines.push('Your dose: '+fmt(perDose)+' '+m.unit+' once a week.');
+    if(m.maxWeek && perDose>m.maxWeek){res.warn=true;res.lines.push('⚠️ This is above the usual maximum of '+fmt(m.maxWeek)+' '+m.unit+' a week.');}
+    else if(m.maxDay && !m.maxWeek && perDose>m.maxDay){res.warn=true;res.lines.push('⚠️ This single dose is above the usual daily maximum of '+fmt(m.maxDay)+' '+m.unit+'.');}
+    return res;
+  }
+  const daily=perDose*times;
+  res.lines.push('Your dose: '+fmt(perDose)+' '+m.unit+(times>1?' × '+times+' = '+fmt(daily)+' '+m.unit:'')+' a day'+(entry.freq==='prn'?' at most':'')+'.');
+  if(m.maxDay && daily>m.maxDay+1e-9){
+    res.warn=true;
+    res.lines.push('⚠️ This is above the usual adult maximum of '+fmt(m.maxDay)+' '+m.unit+' a day. Side effects are more likely at higher doses. Check the label, and ask your pharmacist or doctor to confirm.');
+  } else if(m.maxWeek && daily*7>m.maxWeek+1e-9){
+    res.warn=true;
+    res.lines.push('⚠️ That adds up to '+fmt(daily*7)+' '+m.unit+' a week, above the usual maximum of '+fmt(m.maxWeek)+' '+m.unit+' a week.');
+  }
+  // likely unit mix-up (e.g. mg entered as mcg)
+  if(m.maxDay && daily>m.maxDay*50) res.lines.push('Is the unit correct? Check whether the label says mg or mcg.');
+  return res;
+}
+
+/* ------------------------------------------------------------------ */
+/* Search                                                             */
+/* ------------------------------------------------------------------ */
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+const INDEX = MEDS.flatMap(m=>[{m,label:m.name,isBrand:false,k:norm(m.name)},...m.brands.map(b=>({m,label:b,isBrand:true,k:norm(b)}))]);
+// Common alternate spellings
+const ALIASES={frusemide:'furosemide',thyroxine:'levothyroxine',prednisone:'prednisolone',augmentin:'amoxiclav','co amoxiclav':'amoxiclav',valproic:'valproate',epilim:'valproate',nitroglycerin:'gtn','the pill':'coc','birth control':'coc',contraceptive:'coc',hypericum:'stjohns','st johns wort':'stjohns',ozempic:'semaglutide',ventolin:'salbutamol'};
+function search(q){
+  const n=norm(q); if(!n) return [];
+  const scored=[];
+  for(const it of INDEX){
+    let s=-1;
+    if(it.k===n) s=0; else if(it.k.startsWith(n)) s=1; else if(it.k.split(' ').some(w=>w.startsWith(n))) s=2; else if(n.length>=3&&it.k.includes(n)) s=3;
+    if(s>=0) scored.push({...it,s});
+  }
+  for(const [a,id] of Object.entries(ALIASES)) if(a.startsWith(n)||(n.length>=4&&n.startsWith(a))) scored.push({m:BY_ID[id],label:BY_ID[id].name,isBrand:false,s:1.5});
+  scored.sort((a,b)=>a.s-b.s||a.label.localeCompare(b.label));
+  const seen=new Set(), out=[];
+  for(const r of scored){ if(seen.has(r.m.id)) continue; seen.add(r.m.id); out.push(r); if(out.length>=8) break; }
+  return out;
+}
+
+/* ------------------------------------------------------------------ */
+/* State + storage                                                    */
+/* ------------------------------------------------------------------ */
+let state=[]; // {id|custom, amt, unit, freq, prnmax}
+const KEY='med-checker-list-v1';
+try{const s=JSON.parse(localStorage.getItem(KEY)||'[]'); if(Array.isArray(s)) state=s.filter(e=>e&&(BY_ID[e.id]||e.custom));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+
+/* ------------------------------------------------------------------ */
+/* UI                                                                 */
+/* ------------------------------------------------------------------ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let picked=null, sel=-1, results=[];
+
+const q=$('#q'), sug=$('#suggest'), form=$('#dose-form'), nf=$('#not-found');
+function showSuggest(){
+  results=search(q.value); sel=-1;
+  nf.classList.add('hidden');
+  if(!q.value.trim()){sug.classList.add('hidden');q.setAttribute('aria-expanded','false');return;}
+  if(!results.length){
+    sug.classList.add('hidden'); q.setAttribute('aria-expanded','false');
+    nf.innerHTML='We don’t have <b>'+esc(q.value.trim())+'</b> in this list yet. Check the spelling, or try the generic name printed on the box under the brand name. <button type="button" class="btn-link" id="add-custom">Add it anyway</button> (we can’t show side effects for it, but it will appear on your printed list).';
+    nf.classList.remove('hidden');
+    $('#add-custom').onclick=()=>{state.push({custom:q.value.trim()});save();q.value='';nf.classList.add('hidden');render();};
+    return;
+  }
+  sug.innerHTML=results.map((r,i)=>'<button type="button" role="option" data-i="'+i+'" aria-selected="false"><span class="b">'+esc(r.isBrand?r.label:r.m.name)+'</span>'+(r.isBrand?' <span class="muted">('+esc(r.m.name)+')</span>':'')+'<br><span class="small muted">'+esc(r.m.use)+'</span></button>').join('');
+  sug.classList.remove('hidden'); q.setAttribute('aria-expanded','true');
+}
+function highlight(){[...sug.children].forEach((b,i)=>b.setAttribute('aria-selected',i===sel?'true':'false')); if(sug.children[sel]) sug.children[sel].scrollIntoView({block:'nearest'});}
+q.addEventListener('input',showSuggest);
+q.addEventListener('keydown',e=>{
+  if(sug.classList.contains('hidden')) return;
+  if(e.key==='ArrowDown'){sel=Math.min(sel+1,results.length-1);highlight();e.preventDefault();}
+  else if(e.key==='ArrowUp'){sel=Math.max(sel-1,0);highlight();e.preventDefault();}
+  else if(e.key==='Enter'){e.preventDefault(); pick(results[sel<0?0:sel]);}
+  else if(e.key==='Escape'){sug.classList.add('hidden');}
+});
+sug.addEventListener('click',e=>{const b=e.target.closest('button'); if(b) pick(results[+b.dataset.i]);});
+document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap')) sug.classList.add('hidden');});
+
+function pick(r){
+  if(!r) return;
+  picked=r.m;
+  sug.classList.add('hidden'); q.setAttribute('aria-expanded','false');
+  q.value=r.isBrand?r.label+' ('+r.m.name+')':r.m.name;
+  $('#picked').innerHTML='<b>'+esc(r.m.name)+'</b>. '+esc(r.m.use)+'<br><span class="small muted">Brands include: '+esc(r.m.brands.join(', '))+'</span>';
+  $('#dose-hint').textContent='Usual adult dose: '+r.m.range+'.';
+  $('#unit').value=(r.m.unit&&r.m.unit!==null)?r.m.unit:'mg';
+  $('#freq').value=r.m.weekly?'w':'1';
+  $('#amt').value=''; $('#prnmax').value='';
+  $('#prn-wrap').classList.add('hidden');
+  form.classList.remove('hidden');
+  $('#amt').focus();
+}
+$('#freq').addEventListener('change',()=>$('#prn-wrap').classList.toggle('hidden',$('#freq').value!=='prn'));
+$('#cancel').onclick=()=>{form.classList.add('hidden');picked=null;q.value='';q.focus();};
+form.addEventListener('submit',e=>{
+  e.preventDefault(); if(!picked) return;
+  const amt=parseFloat($('#amt').value);
+  const entry={id:picked.id,amt:isFinite(amt)&&amt>0?amt:null,unit:$('#unit').value,freq:$('#freq').value,prnmax:parseInt($('#prnmax').value)||null};
+  const existing=state.findIndex(s=>s.id===picked.id);
+  if(existing>=0) state[existing]=entry; else state.push(entry);
+  save(); form.classList.add('hidden'); picked=null; q.value=''; render(); q.focus();
+});
+$('#clear').onclick=()=>{if(state.length&&confirm('Remove all medicines from your list?')){state=[];save();render();}};
+$('#print').onclick=()=>window.print();
+
+const FREQ_TXT={'1':'once a day','2':'twice a day','3':'3 times a day','4':'4 times a day','w':'once a week','prn':'when needed'};
+function medName(m){return '<b>'+esc(m.name)+'</b>'}
+
+function renderMed(e,idx){
+  if(e.custom){
+    return '<article class="card"><div class="med-head"><div><h3>'+esc(e.custom)+'</h3><div class="med-sub">Not in our list</div></div>'+
+      '<button class="btn-link no-print" data-rm="'+idx+'">Remove</button></div>'+
+      '<p class="small muted">We don’t have information for this medicine, so it isn’t included in the combination check. Ask your pharmacist to check it against your other medicines, or read its Consumer Medicine Information (CMI).</p></article>';
+  }
+  const m=BY_ID[e.id]; const dc=doseCheck(e);
+  const doseTxt=e.amt?(e.amt+' '+e.unit+' '+FREQ_TXT[e.freq]+(e.freq==='prn'&&e.prnmax?' (up to '+e.prnmax+'× a day)':'')):(FREQ_TXT[e.freq]?'Dose not entered · '+FREQ_TXT[e.freq]:'Dose not entered');
+  let h='<article class="card"><div class="med-head"><div><h3>'+esc(m.name)+'</h3><div class="med-sub">'+esc(m.use)+'</div><div class="med-sub">'+esc(doseTxt)+'</div></div>'+
+    '<div class="no-print" style="white-space:nowrap"><button class="btn-link" data-edit="'+idx+'">Edit</button><button class="btn-link" data-rm="'+idx+'">Remove</button></div></div>';
+  if(dc&&dc.lines.length){
+    h+='<p class="small '+(dc.warn?'dose-warn':'')+'">'+dc.lines.map(esc).join('<br>')+'</p>';
+    if(!dc.warn&&e.amt) h+='<p class="small dose-ok">✓ Within the usual adult range ('+esc(m.range)+').</p>';
+  } else {
+    h+='<p class="small muted">Usual adult dose: '+esc(m.range)+'.</p>';
+  }
+  h+='<h4 style="margin:.6em 0 .2em">Common side effects</h4>';
+  h+= m.common.length ? '<div class="chips">'+[...new Set(m.common)].map(k=>'<span class="chip">'+esc(SE[k])+'</span>').join('')+'</div>' : '<p class="small">Few side effects at normal doses.</p>';
+  h+='<p class="small muted">Many people get none of these, or they ease after the first week or two.</p>';
+  h+='<div class="serious"><h4>Get medical help if you notice</h4><ul class="clean">'+m.serious.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></div>';
+  if(m.tips&&m.tips.length) h+='<details><summary>Tips</summary><ul class="clean">'+m.tips.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul></details>';
+  return h+'</article>';
+}
+
+function render(){
+  const list=$('#list');
+  $('#count').textContent=state.length?'('+state.length+')':'';
+  list.innerHTML=state.length?state.map(renderMed).join(''):'<p class="empty">No medicines added yet.</p>';
+  list.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{state.splice(+b.dataset.rm,1);save();render();});
+  list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{
+    const e=state[+b.dataset.edit]; const m=BY_ID[e.id];
+    pick({m,isBrand:false,label:m.name});
+    if(e.amt) $('#amt').value=e.amt; $('#unit').value=e.unit; $('#freq').value=e.freq;
+    $('#prn-wrap').classList.toggle('hidden',e.freq!=='prn'); if(e.prnmax) $('#prnmax').value=e.prnmax;
+    $('.search-card').scrollIntoView({behavior:'smooth'});
+  });
+
+  const meds=state.filter(e=>!e.custom).map(e=>BY_ID[e.id]);
+  const combo=$('#combo'), shared=$('#shared');
+  if(meds.length<2){
+    combo.innerHTML='<p class="empty">Add two or more medicines to check them together.</p>';
+    shared.innerHTML='<p class="empty">Add two or more medicines to see shared side effects.</p>';
+    return;
+  }
+  const ix=checkCombos(meds);
+  combo.innerHTML = ix.length ? ix.map(i=>
+    '<div class="ix sev-'+i.sev+'"><span class="pill pill-'+i.sev+'">'+i.sev+'</span><h3>'+esc(i.title)+'</h3>'+
+    '<p class="who">'+[...new Map(i.who.map(m=>[m.id,m])).values()].map(medName).join(' + ')+'</p><p>'+esc(i.text)+'</p></div>').join('')
+    + '<p class="small muted">Not every combination is listed. Your pharmacist can do a full check.</p>'
+    : '<div class="ix sev-minor"><h3>No known combination problems found</h3><p>We didn’t find a known interaction between these medicines in our list. That doesn’t guarantee there are none, so ask your pharmacist to confirm.</p></div>';
+
+  const sh=sharedEffects(meds);
+  shared.innerHTML = sh.length ? '<div class="card" style="padding:4px 12px"><table><thead><tr><th>Side effect</th><th>Could come from</th></tr></thead><tbody>'+
+    sh.map(([k,ms])=>'<tr><td>'+esc(SE[k])+'</td><td>'+ms.map(m=>esc(m.name)).join(', ')+'</td></tr>').join('')+'</tbody></table></div>'
+    : '<p class="empty">None of your medicines share a common side effect in our list.</p>';
+}
+render();
+
+// Expose for testing
+window.__med={MEDS,checkCombos,sharedEffects,doseCheck,search,SE};
+</script>
+</body>
+</html>
