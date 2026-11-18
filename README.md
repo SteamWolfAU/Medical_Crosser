@@ -22,7 +22,7 @@ The list is saved in the browser on that device only. Use **Print / save PDF** t
 
 ## Coverage
 
-There are 104 commonly prescribed and over-the-counter medicines on the Australian market, plus St John's wort. They cover heart and blood pressure, cholesterol, diabetes, stomach, mental health and sleep, ADHD, pain, antibiotics, hormones, bones, gout, allergy, asthma and epilepsy. Medicines that aren't listed can still be added by name. They appear on the printed list but aren't included in the checks.
+There are 110 commonly prescribed and over-the-counter medicines on the Australian market, plus St John's wort. They cover heart and blood pressure, cholesterol, diabetes, stomach, mental health and sleep, ADHD, pain, antibiotics, hormones, bones, gout, blood disorders, skin, allergy, asthma and epilepsy. Search also accepts names as printed on a pharmacy label, e.g. "Bisoprolol Fumarate Tablets 5mg". Medicines that aren't listed can still be added by name. They appear on the printed list but aren't included in the checks.
 
 To add a medicine, add an entry to the `MEDS` array in `index.html`. Use side-effect keys from `SE` and tags that the rules in `PAIRS` / `TAG_RULES` recognise.
 
