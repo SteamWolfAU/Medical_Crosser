@@ -95,6 +95,7 @@ th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertic
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .hidden{display:none}
 footer{margin-top:32px;font-size:.88rem;color:var(--muted)}
+.counter img{display:inline-block;vertical-align:middle;border:0}
 @media print{
   body{background:#fff;color:#000}
   .no-print,.search-card{display:none!important}
@@ -194,7 +195,13 @@ footer{margin-top:32px;font-size:.88rem;color:var(--muted)}
   <footer>
     <p><b>About this information.</b> It is a plain-English summary of commonly reported side effects and well-known interactions for adults. It does not list every side effect or interaction. It doesn't account for your age, weight, kidney or liver function, pregnancy, or other health conditions. For full details, read the Consumer Medicine Information (CMI) leaflet for your medicine. Your pharmacist can give you one, and you can search for it on the TGA website or at healthdirect.gov.au.</p>
     <p>Usual dose ranges are typical adult ranges. Your doctor may prescribe a different dose for good reasons.</p>
-    <p>Your list is saved only in this browser on this device. Nothing is sent anywhere.</p>
+    <p>Your list is saved only in this browser on this device. Your medicines are never sent anywhere.</p>
+    <p class="counter">
+      <a href="https://hits.sh/steamwolfau.github.io/Medical_Crosser/" target="_blank" rel="noopener">
+        <img src="https://hits.sh/steamwolfau.github.io/Medical_Crosser.svg?label=visits" alt="Visit counter" height="20" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.counter').remove()">
+      </a>
+      <br><span class="small">The visit counter is an image from hits.sh. It counts page views only and never sees your medicines.</span>
+    </p>
   </footer>
 </main>
 
