@@ -2,6 +2,8 @@
 
 **Live app:** https://steamwolfau.github.io/Medical_Crosser/
 
+[![Visits](https://hits.sh/steamwolfau.github.io/Medical_Crosser.svg?label=visits)](https://hits.sh/steamwolfau.github.io/Medical_Crosser/)
+
 
 A single-file web app. Open `index.html` in any browser, including on a phone. There's no install, no account and no build step, and it works offline.
 
@@ -20,7 +22,7 @@ A single-file web app. Open `index.html` in any browser, including on a phone. T
    - two medicines from the same group (e.g. two NSAIDs, two paracetamol products, ACE inhibitor + ARB)
 5. **Shared side effects.** A table showing which side effects more than one of your medicines can cause.
 
-The list is saved in the browser on that device only. Use **Print / save PDF** to take it to a GP or pharmacist.
+The list is saved in the browser on that device only. The visit counter at the bottom of the page is an image from hits.sh. It counts page views and receives nothing about the medicines entered. Use **Print / save PDF** to take it to a GP or pharmacist.
 
 ## Coverage
 
