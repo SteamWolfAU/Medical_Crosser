@@ -100,6 +100,16 @@ textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px
 .ok-msg{color:var(--minor);font-weight:600}
 footer{margin-top:32px;font-size:.88rem;color:var(--muted)}
 .counter img{display:inline-block;vertical-align:middle;border:0}
+dialog#disclaimer{border:0;border-radius:16px;padding:0;max-width:520px;width:calc(100% - 32px);background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog#disclaimer::backdrop{background:rgba(10,14,20,.72)}
+.dlg{padding:20px}
+.dlg h2{margin:0 0 .4em;font-size:1.3rem}
+.dlg ul{margin:.4em 0 .8em;padding-left:1.2em}
+.dlg li{margin:.3em 0}
+.dlg .check{display:flex;gap:10px;align-items:flex-start;font-weight:600;margin:12px 0;cursor:pointer}
+.dlg .check input{width:22px;height:22px;flex:none;margin-top:2px}
+.dlg button[disabled]{opacity:.45;cursor:not-allowed}
+@media print{dialog#disclaimer{display:none}}
 @media print{
   body{background:#fff;color:#000}
   .no-print,.search-card{display:none!important}
@@ -108,7 +118,23 @@ footer{margin-top:32px;font-size:.88rem;color:var(--muted)}
 </style>
 </head>
 <body>
-<main>
+<dialog id="disclaimer" aria-labelledby="dlg-h" aria-describedby="dlg-body">
+  <form method="dialog" class="dlg" id="dlg-form">
+    <h2 id="dlg-h">⚠️ Before you start</h2>
+    <div id="dlg-body">
+      <p><b>This tool is not medical advice.</b> It is for general reference only.</p>
+      <ul>
+        <li>It may not include every side effect, interaction or medicine, and it can’t take your personal health into account.</li>
+        <li><b>Always talk to your doctor or pharmacist</b> before starting, stopping or changing any medicine, or making any decision about your treatment.</li>
+        <li>Don’t ignore professional advice or delay getting help because of something you read here.</li>
+      </ul>
+      <p class="small">Emergency: call <b>000</b>. Poisons Information: <b>13 11 26</b>. Health advice: healthdirect <b>1800 022 222</b>.</p>
+    </div>
+    <label class="check"><input type="checkbox" id="dlg-ok"> I understand this is not medical advice, and I will consult a doctor or pharmacist before making any decisions about my medicines.</label>
+    <button type="submit" class="btn" id="dlg-go" disabled style="width:100%">Continue to the tool</button>
+  </form>
+</dialog>
+<main id="app">
   <h1>💊 Medicine Side Effects</h1>
   <p class="muted">Add the medicines you've been prescribed, including any you buy yourself. You'll get a plain-English summary of each medicine's side effects, and a check for side effects that can come from taking them together.</p>
 
@@ -1280,6 +1306,28 @@ $('#req-form').addEventListener('submit',e=>{
   msg.classList.remove('hidden');
   $('#req-copy').onclick=async()=>{try{await navigator.clipboard.writeText(REQUEST_EMAIL);$('#req-copy').textContent='Copied ✓';}catch(err){$('#req-copy').textContent=REQUEST_EMAIL;}};
 });
+
+/* ------------------------------------------------------------------ */
+/* Disclaimer: must be acknowledged before the tool can be used.       */
+/* Asked again in each new browser session.                           */
+/* ------------------------------------------------------------------ */
+(function(){
+  const dlg=$('#disclaimer'), app=$('#app'), ok=$('#dlg-ok'), go=$('#dlg-go');
+  const KEY_ACK='med-checker-ack-v1';
+  let acked=false; try{acked=sessionStorage.getItem(KEY_ACK)==='1'}catch(e){}
+  if(acked) return;
+  app.inert=true; app.setAttribute('aria-hidden','true');
+  ok.addEventListener('change',()=>{go.disabled=!ok.checked});
+  dlg.addEventListener('cancel',e=>e.preventDefault());           // Esc can't dismiss it
+  $('#dlg-form').addEventListener('submit',e=>{
+    if(!ok.checked){e.preventDefault();return;}
+    try{sessionStorage.setItem(KEY_ACK,'1')}catch(err){}
+    app.inert=false; app.removeAttribute('aria-hidden');
+    setTimeout(()=>$('#q').focus(),0);
+  });
+  dlg.addEventListener('close',()=>{ if(!ok.checked) dlg.showModal(); });
+  if(typeof dlg.showModal==='function') dlg.showModal(); else dlg.setAttribute('open','');
+})();
 
 // Expose for testing
 window.__med={MEDS,checkCombos,sharedEffects,doseCheck,search,SE,ALT_GROUPS,MED_ALT,alternativesHtml,buildRequestMailto};

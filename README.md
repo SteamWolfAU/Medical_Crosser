@@ -9,6 +9,8 @@ A single-file web app. Open `index.html` in any browser, including on a phone. T
 
 ## What it does
 
+When a visitor first opens the page in a browser session, a pop-up says the tool is for reference only and isn't medical advice. They must tick "I understand" before they can use the tool. It appears again in each new browser session.
+
 1. **Add your medicines.** Search by generic name (e.g. *atorvastatin*) or Australian brand name (e.g. *Lipitor*, *Nurofen*, *Somac*). Enter the amount each time and how often you take it.
 2. **Plain-English side effects for each medicine:**
    - common side effects
