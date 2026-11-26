@@ -20,13 +20,16 @@ A single-file web app. Open `index.html` in any browser, including on a phone. T
    - additive effects across any number of medicines: serotonin syndrome, drowsiness and slowed breathing (opioids + sedatives), bleeding, QT/heart rhythm, high potassium, slow heart rate, anticholinergic load, low sodium, low blood pressure, low blood sugar
    - the "triple whammy" (ACE inhibitor/ARB + diuretic + NSAID)
    - two medicines from the same group (e.g. two NSAIDs, two paracetamol products, ACE inhibitor + ARB)
-5. **Shared side effects.** A table showing which side effects more than one of your medicines can cause.
+5. **Alternatives available in Australia.** Each medicine lists other brands of the same medicine (generic substitution), plus other medicines in the same group or used for the same purpose. Every list is a reminder to change medicines only with a doctor.
+6. **Shared side effects.** A table showing which side effects more than one of your medicines can cause.
+
+7. **Request a missing medicine.** A form opens the user's own email app with a request to medical@bladestar.online ready to send. Nothing is sent automatically.
 
 The list is saved in the browser on that device only. The visit counter at the bottom of the page is an image from hits.sh. It counts page views and receives nothing about the medicines entered. Use **Print / save PDF** to take it to a GP or pharmacist.
 
 ## Coverage
 
-There are 110 commonly prescribed and over-the-counter medicines on the Australian market, plus St John's wort. They cover heart and blood pressure, cholesterol, diabetes, stomach, mental health and sleep, ADHD, pain, antibiotics, hormones, bones, gout, blood disorders, skin, allergy, asthma and epilepsy. Search also accepts names as printed on a pharmacy label, e.g. "Bisoprolol Fumarate Tablets 5mg". Medicines that aren't listed can still be added by name. They appear on the printed list but aren't included in the checks.
+There are 110 commonly prescribed and over-the-counter medicines on the Australian market, plus 10 common complementary medicines: fish oil, glucosamine, turmeric, ginkgo, ginseng, valerian, melatonin, magnesium, calcium, iron and St John's wort. These are checked for interactions too, e.g. with blood thinners, or iron/calcium blocking antibiotic and thyroxine absorption. They cover heart and blood pressure, cholesterol, diabetes, stomach, mental health and sleep, ADHD, pain, antibiotics, hormones, bones, gout, blood disorders, skin, allergy, asthma and epilepsy. Search also accepts names as printed on a pharmacy label, e.g. "Bisoprolol Fumarate Tablets 5mg". Medicines that aren't listed can still be added by name. They appear on the printed list but aren't included in the checks.
 
 To add a medicine, add an entry to the `MEDS` array in `index.html`. Use side-effect keys from `SE` and tags that the rules in `PAIRS` / `TAG_RULES` recognise.
 

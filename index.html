@@ -50,7 +50,7 @@ p{margin:.4em 0}
 .notice strong{display:block;margin-bottom:2px}
 label{font-weight:600;display:block;margin:10px 0 4px}
 input,select,button{font:inherit}
-input[type=text],input[type=number],select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+input[type=text],input[type=number],input[type=email],select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
 input:focus,select:focus,button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row>*{flex:1 1 140px}
@@ -94,6 +94,10 @@ th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertic
 .empty{color:var(--muted);font-style:italic}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .hidden{display:none}
+textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;min-height:84px;resize:vertical}
+.alt-group{margin:.5em 0}
+.alt-group b{display:block}
+.ok-msg{color:var(--minor);font-weight:600}
 footer{margin-top:32px;font-size:.88rem;color:var(--muted)}
 .counter img{display:inline-block;vertical-align:middle;border:0}
 @media print{
@@ -192,6 +196,24 @@ footer{margin-top:32px;font-size:.88rem;color:var(--muted)}
     <div id="shared"><p class="empty">Add two or more medicines to see shared side effects.</p></div>
   </section>
 
+  <section class="card no-print" id="request" aria-labelledby="req-h">
+    <h2 id="req-h" style="margin-top:0">Can’t find your medicine? Request it</h2>
+    <p class="small muted">Tell us which medicine to add. This opens your own email app with a message to <b>medical@bladestar.online</b> ready to send. Nothing is sent until you press Send there.</p>
+    <form id="req-form" autocomplete="off">
+      <label for="req-name">Medicine name <span class="muted">(required)</span></label>
+      <input id="req-name" type="text" maxlength="120" required placeholder="As printed on the box or label">
+      <label for="req-detail">Brand and strength <span class="muted">(optional)</span></label>
+      <input id="req-detail" type="text" maxlength="160" placeholder="e.g. Brand X 100 mg tablets">
+      <label for="req-note">Anything else? <span class="muted">(optional)</span></label>
+      <textarea id="req-note" maxlength="1000" placeholder="e.g. it's a new medicine, or another name for it"></textarea>
+      <label for="req-email">Your email for a reply <span class="muted">(optional)</span></label>
+      <input id="req-email" type="email" maxlength="120" placeholder="you@example.com">
+      <p class="small muted">Please don’t include personal health details. Just the medicine is enough.</p>
+      <div class="row" style="margin-top:10px"><button type="submit" class="btn">Send request</button></div>
+      <p id="req-msg" class="small hidden" role="status"></p>
+    </form>
+  </section>
+
   <footer>
     <p><b>About this information.</b> It is a plain-English summary of commonly reported side effects and well-known interactions for adults. It does not list every side effect or interaction. It doesn't account for your age, weight, kidney or liver function, pregnancy, or other health conditions. For full details, read the Consumer Medicine Information (CMI) leaflet for your medicine. Your pharmacist can give you one, and you can search for it on the TGA website or at healthdirect.gov.au.</p>
     <p>Usual dose ranges are typical adult ranges. Your doctor may prescribe a different dose for good reasons.</p>
@@ -230,7 +252,7 @@ const SE = {
   thirst:'Thirst or dehydration', breast:'Breast tenderness or enlargement', bp_up:'Raised blood pressure',
   mouth:'Mouth ulcers', chest:'Brief chest or throat tightness, tingling', spotting:'Spotting between periods',
   injection:'Redness or lumps where injected', nightmares:'Vivid dreams or nightmares',
-  skin:'Dry skin, or darkening of skin or nails', nosebleed:'Nosebleeds', nose_irrit:'Dry or irritated nose', sting:'Burning or stinging where applied', eczema:'Dry, itchy skin (eczema)'
+  skin:'Dry skin, or darkening of skin or nails', nosebleed:'Nosebleeds', nose_irrit:'Dry or irritated nose', sting:'Burning or stinging where applied', fishy:'Fishy burps or aftertaste', darkstool:'Dark or black stools (harmless with iron)', eczema:'Dry, itchy skin (eczema)'
 };
 
 /* ------------------------------------------------------------------ */
@@ -532,7 +554,7 @@ const MEDS = [
 {id:'cefalexin',name:'Cefalexin',brands:['Keflex','Ialex','Cilex'],use:'Bacterial infections (cephalosporin antibiotic)',unit:'mg',range:'1000–4000 mg a day',maxDay:4000,tags:['abx'],
  common:['diarrhoea','nausea','indigestion','rash','thrush'],
  serious:['Swelling of the face or throat, trouble breathing (allergy). Call 000','Severe or bloody diarrhoea']},
-{id:'doxycycline',name:'Doxycycline',brands:['Doryx','Doxy','Doxylin','Frakas'],use:'Infections, acne, malaria prevention (tetracycline antibiotic)',unit:'mg',range:'50–200 mg a day',maxDay:200,tags:['abx'],
+{id:'doxycycline',name:'Doxycycline',brands:['Doryx','Doxy','Doxylin','Frakas'],use:'Infections, acne, malaria prevention (tetracycline antibiotic)',unit:'mg',range:'50–200 mg a day',maxDay:200,tags:['abx','chelated'],
  common:['nausea','heartburn','indigestion','sun','diarrhoea','thrush'],
  serious:['Pain when swallowing or behind the breastbone (throat ulcer)','Severe headache with blurred vision (rare)','Severe sunburn'],
  tips:['Swallow with a full glass of water while sitting or standing, and stay upright for 30 minutes.','Keep 2–3 hours apart from antacids, iron, calcium or zinc.','Use sunscreen.']},
@@ -546,7 +568,7 @@ const MEDS = [
 {id:'trimethoprim',name:'Trimethoprim',brands:['Alprim','Triprim','Bactrim (with sulfamethoxazole)'],use:'Urinary tract infections (antibiotic)',unit:'mg',range:'150–300 mg a day',maxDay:300,tags:['abx','hyperk'],
  common:['itch','rash','nausea'],
  serious:['Severe rash or blistering','Sore throat, fever, mouth ulcers (blood problems)','Muscle weakness or irregular heartbeat (high potassium)']},
-{id:'ciprofloxacin',name:'Ciprofloxacin',brands:['Ciproxin','Ciprol','Cipro'],use:'Serious or resistant infections (quinolone antibiotic)',unit:'mg',range:'500–1500 mg a day',maxDay:1500,tags:['abx','qt','quinolone','seizure'],
+{id:'ciprofloxacin',name:'Ciprofloxacin',brands:['Ciproxin','Ciprol','Cipro'],use:'Serious or resistant infections (quinolone antibiotic)',unit:'mg',range:'500–1500 mg a day',maxDay:1500,tags:['abx','qt','quinolone','seizure','chelated'],
  common:['nausea','diarrhoea','headache','dizzy','rash'],
  serious:['Pain or swelling of a tendon, especially the heel (Achilles). Stop and rest it','Numbness, burning or tingling in hands or feet','Sudden severe chest, back or stomach pain (rare tear in the aorta). Call 000','Confusion, anxiety or mood changes'],
  tips:['Keep 2 hours apart from antacids, calcium, iron, zinc and dairy on its own.']},
@@ -559,7 +581,7 @@ const MEDS = [
  tips:['Don’t drink alcohol while taking it and for at least 24 hours (many pharmacists say 72 hours) after the last dose. It can cause severe flushing, vomiting and a racing heart.']},
 
 /* --- Hormones, bones, gout, immune --- */
-{id:'levothyroxine',name:'Levothyroxine (thyroxine)',brands:['Eutroxsig','Oroxine','Eltroxin'],use:'Underactive thyroid',unit:'mcg',range:'25–200 mcg once a day',maxDay:300,tags:[],
+{id:'levothyroxine',name:'Levothyroxine (thyroxine)',brands:['Eutroxsig','Oroxine','Eltroxin'],use:'Underactive thyroid',unit:'mcg',range:'25–200 mcg once a day',maxDay:300,tags:['chelated'],
  common:[],
  serious:['Chest pain, racing or irregular heartbeat (dose too high)'],
  tips:['Side effects usually mean the dose is too high: palpitations, sweating, shaking, trouble sleeping, weight loss. Your doctor checks this with blood tests.','Take on an empty stomach, 30–60 minutes before breakfast.','Keep 4 hours apart from calcium and iron supplements.']},
@@ -579,7 +601,7 @@ const MEDS = [
  common:['nausea','tired','mouth','hair','appetite_down','diarrhoea'],
  serious:['Mouth ulcers, sore throat, fever or other signs of infection','New cough or breathlessness','Unusual bruising or bleeding','Yellow skin or eyes'],
  tips:['It is taken ONCE A WEEK, not every day. Taking it daily by mistake can be fatal.','Folic acid on other days reduces side effects.','Regular blood tests are needed. Limit alcohol.']},
-{id:'alendronate',name:'Alendronate',brands:['Fosamax','Fosamax Plus (with vitamin D)','Alendro'],use:'Osteoporosis (bisphosphonate)',unit:'mg',range:'70 mg once a week (or 10 mg daily)',maxWeek:70,weekly:true,tags:[],
+{id:'alendronate',name:'Alendronate',brands:['Fosamax','Fosamax Plus (with vitamin D)','Alendro'],use:'Osteoporosis (bisphosphonate)',unit:'mg',range:'70 mg once a week (or 10 mg daily)',maxWeek:70,weekly:true,tags:['chelated'],
  common:['indigestion','heartburn','muscle','joint','indigestion'],
  serious:['Pain or difficulty swallowing, chest pain (throat irritation)','Jaw pain or a dental wound that won’t heal','New thigh or groin pain'],
  tips:['Take first thing in the morning with a full glass of plain water, at least 30 minutes before food. Stay upright for 30 minutes.']},
@@ -680,8 +702,49 @@ const MEDS = [
  serious:['Muscle cramps or spasms, tingling in the fingers, toes or around the mouth (low calcium)','Jaw pain, loose teeth or a dental wound that won’t heal','New thigh, hip or groin pain','Red, swollen, hot skin with fever (skin infection)'],
  tips:['Don’t delay or miss a dose. Stopping it can cause rapid bone loss and spine fractures. If you stop, your doctor will start another bone medicine.','Take calcium and vitamin D as your doctor advises.','Have a dental check-up before starting, and tell your dentist you have it.']},
 
+
+/* --- Complementary medicines (vitamins, minerals, herbal) --- */
+{id:'fishoil',name:'Fish oil / krill oil (omega-3)',brands:['Blackmores Fish Oil','Nature’s Way Fish Oil','Swisse Wild Krill Oil','Bio-Organics Fish Oil','Omacor (prescription)'],use:'Complementary medicine: heart health, joints, high triglycerides',unit:'mg',range:'1000–4000 mg of fish oil a day (check the omega-3 content on the label)',tags:['bleed_herbal','complementary'],
+ common:['fishy','indigestion','nausea','diarrhoea'],
+ serious:['Unusual bleeding or bruising, especially with blood thinners'],
+ tips:['Taking it with meals, or freezing the capsules, can reduce fishy burps.','Tell your doctor or pharmacist you take it. It counts as a medicine.']},
+{id:'glucosamine',name:'Glucosamine',brands:['Blackmores Glucosamine','Swisse Glucosamine','Nature’s Way Glucosamine','Arthro-Aid'],use:'Complementary medicine: osteoarthritis',unit:'mg',range:'1500 mg a day',maxDay:1500,tags:['complementary'],
+ common:['indigestion','nausea','diarrhoea','constipation'],
+ serious:['Swelling of the face or hives (allergy). Some products are made from shellfish'],
+ tips:['If there’s no benefit after about 3 months, it’s unlikely to help.']},
+{id:'turmeric',name:'Turmeric / curcumin',brands:['Blackmores Turmeric','Swisse Turmeric','Meriva','Nature’s Way Turmeric'],use:'Complementary medicine: joint pain and inflammation',unit:'mg',range:'Varies by product',tags:['bleed_herbal','complementary'],
+ common:['indigestion','nausea','diarrhoea'],
+ serious:['Yellow skin or eyes, dark urine, itching or pain under the right ribs (liver injury). The TGA has reported rare cases with turmeric/curcumin products. Stop and see a doctor'],
+ tips:['High-strength or "highly absorbable" products have been linked to rare liver injury.']},
+{id:'ginkgo',name:'Ginkgo biloba',brands:['Blackmores Ginkgo','Nature’s Way Ginkgo','Herbs of Gold Ginkgo'],use:'Complementary medicine: memory and circulation',unit:'mg',range:'Varies by product',tags:['bleed_herbal','complementary'],
+ common:['headache','indigestion','dizzy'],
+ serious:['Unusual bleeding or bruising'],
+ tips:['Stop at least a week before surgery or dental procedures, and tell your surgeon.']},
+{id:'ginseng',name:'Ginseng (Panax / Korean)',brands:['Blackmores Korean Ginseng','Herbs of Gold Ginseng','Nature’s Way Ginseng'],use:'Complementary medicine: energy',unit:'mg',range:'Varies by product',tags:['complementary'],
+ common:['insomnia','headache','agitation','indigestion'],
+ serious:['Fast heartbeat, or very high or low blood sugar if you have diabetes'],
+ tips:['Can lower blood sugar. Check your levels more often if you have diabetes.']},
+{id:'valerian',name:'Valerian',brands:['Herbs of Gold Valerian','Blackmores Valerian','Nature’s Way Valerian'],use:'Complementary medicine: sleep and anxiety',unit:'mg',range:'Varies by product',tags:['sed','complementary'],
+ common:['drowsy','headache','indigestion','dizzy'],
+ serious:['Yellow skin or eyes (rare liver problems)'],
+ tips:['Don’t drive if it makes you drowsy. Avoid alcohol.']},
+{id:'melatonin',name:'Melatonin',brands:['Circadin','Melatonin 2 mg modified-release (pharmacist only, age 55+)'],use:'Short-term sleep problems. Prescription only, except 2 mg modified-release from a pharmacist for people 55 and over',unit:'mg',range:'2 mg 1–2 hours before bed',tags:['mildsed'],
+ common:['drowsy','headache','dizzy','nausea'],
+ serious:['Severe drowsiness the next day'],
+ tips:['Melatonin gummies and high-dose products bought online aren’t approved in Australia, and their strength can vary a lot.']},
+{id:'magnesium',name:'Magnesium supplements',brands:['Blackmores Magnesium','Swisse Magnesium','Ethical Nutrients Mega Magnesium','Cenovis Magnesium'],use:'Complementary medicine: cramps, low magnesium',unit:'mg',range:'About 300–400 mg elemental magnesium a day',tags:['chelator','complementary'],
+ common:['diarrhoea','nausea','indigestion'],
+ serious:['Weakness, very slow breathing or confusion (too much magnesium, mainly in kidney disease)']},
+{id:'calcium',name:'Calcium supplements',brands:['Caltrate','Ostelin Calcium & Vitamin D','Blackmores Calcium','Cal-Sup'],use:'Bone health',unit:'mg',range:'500–1200 mg elemental calcium a day (from diet and supplements combined)',tags:['chelator','complementary'],
+ common:['constipation','wind','indigestion'],
+ serious:['Severe thirst, confusion or kidney stone pain (too much calcium)']},
+{id:'iron',name:'Iron supplements',brands:['Ferro-Grad C','Ferrograd','FGF','Maltofer','Ferro-tab','Ferro-Liquid'],use:'Iron deficiency',unit:'mg',range:'About 60–105 mg elemental iron a day, or on alternate days as advised',tags:['chelator'],
+ common:['constipation','nausea','darkstool','indigestion','diarrhoea'],
+ serious:['Overdose is dangerous, especially in children. Call 13 11 26'],
+ tips:['Keep it out of reach of children.','Taking it with vitamin C (or orange juice) helps absorption. Tea, coffee and dairy reduce it.']},
+
 /* --- Complementary --- */
-{id:'stjohns',name:'St John’s wort (herbal)',brands:['Hypericum','Various herbal products'],use:'Herbal remedy taken for low mood',unit:null,range:'Varies by product',tags:['sero','inducer'],
+{id:'stjohns',name:'St John’s wort (herbal)',brands:['Hypericum','Various herbal products'],use:'Complementary medicine: herbal remedy taken for low mood',unit:null,range:'Varies by product',tags:['sero','inducer','complementary'],
  common:['indigestion','tired','dizzy','sun','drymouth'],
  serious:['Agitation, fever, sweating, twitching (serotonin syndrome) with antidepressants'],
  tips:['It reduces the effect of many prescription medicines. Always tell your doctor and pharmacist you take it.']}
@@ -762,6 +825,14 @@ const PAIRS = [
   text:'Lacosamide can slow the heart’s electrical conduction (the PR interval). Combined with medicines that slow the heart, dizziness, a slow pulse or fainting are more likely. Your doctor may check an ECG.'},
  {a:['#hydroxycarbamide'],b:['tag:anticoag','tag:antiplatelet','tag:nsaid'],sev:'moderate',title:'Bleeding if platelets drop',
   text:'Hydroxycarbamide can lower your platelet count. Combined with a medicine that affects clotting, bleeding is more likely when platelets are low. Keep up your regular blood tests and report unusual bruising or bleeding.'},
+ {a:['tag:chelator'],b:['tag:chelated'],sev:'moderate',title:'Take these at different times',
+  text:'Calcium, iron and magnesium bind to this medicine in the gut and can stop it being absorbed properly. Space them apart. Doxycycline and ciprofloxacin: take at least 2 hours before, or 4–6 hours after. Thyroxine: keep 4 hours apart. Alendronate: take it first, with water only, at least 30 minutes before anything else. Antacids and some multivitamins have the same effect.'},
+ {a:['#warfarin'],b:['#glucosamine','#fishoil','#turmeric','#ginkgo'],sev:'moderate',title:'Warfarin and supplements',
+  text:'This supplement may increase warfarin’s effect or the risk of bleeding. Tell your INR clinic before starting or stopping it, and don’t change how much you take without checking.'},
+ {a:['#warfarin'],b:['#ginseng'],sev:'moderate',title:'Ginseng may reduce warfarin’s effect',
+  text:'Ginseng has been reported to lower the INR. Tell your INR clinic if you start or stop it.'},
+ {a:['#ginseng'],b:['tag:hypo'],sev:'minor',title:'Blood sugar',
+  text:'Ginseng can lower blood sugar slightly, which adds to your diabetes medicine. Check your levels more often.'},
  {a:['#warfarin'],b:['#paracetamol'],sev:'minor',title:'Regular paracetamol can raise INR',
   text:'Occasional paracetamol is the preferred pain reliever with warfarin. Taking full doses regularly for several days can raise your INR, so tell the clinic.'}
 ];
@@ -775,8 +846,10 @@ const TAG_RULES = [
   sev:ms=>{const o=ms.some(m=>has(m,'opioid')); const other=ms.some(m=>!has(m,'opioid')&&(has(m,'benzo')||has(m,'gaba')||has(m,'sed')));
            return (o&&other)?'major':(ms.filter(m=>has(m,'opioid')).length>=2?'major':'moderate');},
   text:'Each of these can cause drowsiness. Together the effect adds up: more sleepiness, slower reactions, falls and, with opioids, dangerously slow breathing. The TGA warns specifically about combining opioids with benzodiazepines, gabapentinoids and other sedatives. Avoid alcohol. Don’t drive until you know how you’re affected. If you take an opioid, keep naloxone at home.'},
- {key:'bleed', tags:['bleed','bleed_mild'], min:2, title:'Bleeding risk',
-  sev:ms=>{if(ms.some(m=>has(m,'anticoag'))) return 'major'; const strong=ms.filter(m=>has(m,'bleed')).length; return strong>=2?'major':'moderate';},
+ {key:'bleed', tags:['bleed','bleed_mild','bleed_herbal'], min:2, title:'Bleeding risk',
+  sev:ms=>{const strong=ms.filter(m=>has(m,'bleed')).length, mild=ms.filter(m=>has(m,'bleed_mild')).length;
+           if(ms.some(m=>has(m,'anticoag')) && (strong+mild)>=2) return 'major';
+           if(strong>=2) return 'major'; return 'moderate';},
   text:'Each of these affects blood clotting or the stomach lining. Together, bleeding is more likely: bruising, nosebleeds, bleeding gums, and stomach bleeding (black or bloody stools, vomiting blood). Sometimes the combination is intended, for example after a heart stent. Don’t add over-the-counter anti-inflammatories without checking with a pharmacist.'},
  {key:'qt', tags:['qt'], min:2, title:'Heart rhythm (QT prolongation)',
   sev:()=> 'major',
@@ -818,6 +891,108 @@ const GROUP_TEXT = {
  sero_ad:'Two serotonin antidepressants together are unusual and raise the risk of serotonin syndrome. Check that this is intended, for example while switching from one to another.',
  benzo:'Two benzodiazepines together increase drowsiness, falls and dependence.'
 };
+
+
+/* ------------------------------------------------------------------ */
+/* Alternatives available in Australia, grouped by what they do.       */
+/* "Name (Brands)|id" where id links to an entry above (used to skip   */
+/* the medicine itself).                                              */
+/* ------------------------------------------------------------------ */
+const ALT_GROUPS = {
+ statin:{label:'Other statins',items:['Atorvastatin (Lipitor)|atorvastatin','Rosuvastatin (Crestor)|rosuvastatin','Simvastatin (Zocor)|simvastatin','Pravastatin (Pravachol)','Fluvastatin (Lescol XL)']},
+ lipid:{label:'Other cholesterol medicines',items:['Ezetimibe (Ezetrol)|ezetimibe','Fenofibrate (Lipidil)','Evolocumab injection (Repatha)','Inclisiran injection (Leqvio)']},
+ acei:{label:'Other ACE inhibitors',items:['Perindopril (Coversyl)|perindopril','Ramipril (Tritace)|ramipril','Enalapril (Renitec)','Lisinopril (Zestril)','Trandolapril (Gopten)','Quinapril (Accupril)']},
+ arb:{label:'ARBs (similar, rarely cause cough)',items:['Irbesartan (Avapro)|irbesartan','Candesartan (Atacand)|candesartan','Telmisartan (Micardis)|telmisartan','Losartan (Cozaar)','Olmesartan (Olmetec)','Valsartan (Diovan)']},
+ dhp:{label:'Other calcium channel blockers',items:['Amlodipine (Norvasc)|amlodipine','Felodipine (Plendil ER)','Lercanidipine (Zanidip)','Nifedipine (Adalat Oros)']},
+ bp_other:{label:'Other blood pressure medicine groups',items:['ACE inhibitors, e.g. perindopril','ARBs, e.g. irbesartan','Calcium channel blockers, e.g. amlodipine','Thiazide-type diuretics, e.g. indapamide']},
+ beta:{label:'Other beta blockers',items:['Metoprolol (Betaloc, Toprol-XL)|metoprolol','Bisoprolol (Bicor)|bisoprolol','Nebivolol (Nebilet)','Carvedilol (Dilatrend)','Atenolol (Tenormin)']},
+ thiazide:{label:'Other thiazide-type diuretics',items:['Indapamide (Natrilix)|indapamide','Hydrochlorothiazide (in combinations, e.g. Avapro HCT)','Chlortalidone (Hygroton)']},
+ loop:{label:'Other loop diuretics',items:['Furosemide (Lasix)|furosemide','Bumetanide (Burinex)']},
+ mra:{label:'Similar medicines',items:['Spironolactone (Aldactone)|spironolactone','Eplerenone (Inspra)']},
+ anticoag:{label:'Other anticoagulants (blood thinners)',items:['Apixaban (Eliquis)|apixaban','Rivaroxaban (Xarelto)|rivaroxaban','Dabigatran (Pradaxa)','Warfarin (Coumadin, Marevan)|warfarin']},
+ antiplatelet:{label:'Other antiplatelets',items:['Aspirin (Cartia, Astrix)|aspirin','Clopidogrel (Plavix)|clopidogrel','Ticagrelor (Brilinta)','Prasugrel (Effient)']},
+ nitrate:{label:'Other nitrates and angina medicines',items:['Glyceryl trinitrate (Nitrolingual)|gtn','Isosorbide mononitrate (Imdur)|ismn','Nicorandil (Ikorel)','Beta blockers or calcium channel blockers']},
+ ratectl:{label:'Other heart rate control medicines',items:['Beta blockers, e.g. bisoprolol','Diltiazem (Cardizem CD)|diltiazem','Verapamil (Isoptin)|verapamil','Digoxin (Lanoxin)|digoxin']},
+ rhythm:{label:'Other heart rhythm medicines (specialist decision)',items:['Amiodarone (Cordarone)|amiodarone','Sotalol (Sotacor)','Flecainide (Tambocor)']},
+ sglt2:{label:'Other SGLT2 inhibitors',items:['Empagliflozin (Jardiance)|empagliflozin','Dapagliflozin (Forxiga)|dapagliflozin','Ertugliflozin (Steglatro)']},
+ diabetes:{label:'Other type 2 diabetes medicine groups',items:['Metformin (Diabex, Diaformin)|metformin','Sulfonylureas: gliclazide (Diamicron MR), glimepiride (Amaryl), glipizide (Minidiab)|gliclazide','SGLT2 inhibitors: empagliflozin, dapagliflozin','DPP-4 inhibitors: sitagliptin (Januvia), linagliptin (Trajenta), saxagliptin (Onglyza), alogliptin (Nesina), vildagliptin (Galvus)|sitagliptin','GLP-1 injections: semaglutide (Ozempic), dulaglutide (Trulicity); tirzepatide (Mounjaro)|semaglutide','Insulin|insulin']},
+ ppi:{label:'Other stomach acid medicines',items:['Pantoprazole (Somac)|pantoprazole','Esomeprazole (Nexium, Esopreze)|esomeprazole','Omeprazole (Losec)|omeprazole','Rabeprazole (Pariet)','Lansoprazole (Zoton)','Famotidine (Pepcidine) – milder, a different type','Antacids such as Gaviscon or Mylanta for occasional symptoms']},
+ antiemetic:{label:'Other anti-nausea medicines',items:['Metoclopramide (Maxolon)|metoclopramide','Ondansetron (Zofran)|ondansetron','Domperidone (Motilium)','Prochlorperazine (Stemetil)']},
+ ssri:{label:'Other SSRI antidepressants',items:['Sertraline (Zoloft)|sertraline','Escitalopram (Lexapro)|escitalopram','Citalopram (Cipramil)|citalopram','Fluoxetine (Prozac, Lovan)|fluoxetine','Paroxetine (Aropax)|paroxetine','Fluvoxamine (Luvox)']},
+ ad_other:{label:'Other antidepressant types',items:['SNRIs: venlafaxine (Efexor-XR), desvenlafaxine (Pristiq), duloxetine (Cymbalta)|venlafaxine','Mirtazapine (Avanza)|mirtazapine','Vortioxetine (Brintellix)','Agomelatine (Valdoxan)','Psychological therapy (a Mental Health Treatment Plan from your GP gives Medicare-subsidised sessions)']},
+ snri:{label:'Other SNRIs',items:['Venlafaxine (Efexor-XR)|venlafaxine','Desvenlafaxine (Pristiq)|desvenlafaxine','Duloxetine (Cymbalta)|duloxetine']},
+ tca:{label:'Similar medicines',items:['Amitriptyline (Endep)|amitriptyline','Nortriptyline (Allegron) – often fewer side effects']},
+ nervepain:{label:'Other nerve pain medicines',items:['Pregabalin (Lyrica)|pregabalin','Gabapentin (Neurontin)|gabapentin','Amitriptyline (Endep)|amitriptyline','Duloxetine (Cymbalta)|duloxetine','Capsaicin cream or lidocaine patches for some localised pain']},
+ antipsych:{label:'Other antipsychotics (specialist decision)',items:['Quetiapine (Seroquel)|quetiapine','Olanzapine (Zyprexa)|olanzapine','Aripiprazole (Abilify)|aripiprazole','Risperidone (Risperdal)','Lurasidone (Latuda)','Paliperidone (Invega)']},
+ moodstab:{label:'Other mood stabilisers (specialist decision)',items:['Lithium (Lithicarb, Quilonum SR)|lithium','Sodium valproate (Epilim)|valproate','Lamotrigine (Lamictal)|lamotrigine','Some antipsychotics, e.g. quetiapine|quetiapine']},
+ benzo:{label:'Other benzodiazepines',items:['Diazepam (Valium)|diazepam','Oxazepam (Serepax)','Alprazolam (Xanax, Kalma)|alprazolam','Lorazepam (Ativan)','Clonazepam (Rivotril)']},
+ sleep:{label:'Other sleep options',items:['Temazepam (Normison)|temazepam','Zolpidem (Stilnox)|zolpidem','Zopiclone (Imovane)','Melatonin modified-release (Circadin)|melatonin','Daridorexant (Quviviq)','Cognitive behavioural therapy for insomnia (CBT-i) – the recommended first treatment']},
+ adhd:{label:'Other ADHD medicines',items:['Methylphenidate (Ritalin, Concerta)|methylphenidate','Lisdexamfetamine (Vyvanse)|lisdexamfetamine','Dexamfetamine','Atomoxetine (Strattera) – non-stimulant','Guanfacine (Intuniv) – non-stimulant']},
+ simplepain:{label:'Other pain relievers',items:['Paracetamol (Panadol)|paracetamol','Ibuprofen (Nurofen)|ibuprofen','Topical anti-inflammatory gel (Voltaren Emulgel) for joint or muscle pain']},
+ nsaid:{label:'Other anti-inflammatories (NSAIDs)',items:['Ibuprofen (Nurofen)|ibuprofen','Naproxen (Naprosyn)|naproxen','Diclofenac (Voltaren)|diclofenac','Celecoxib (Celebrex)|celecoxib','Meloxicam (Mobic)|meloxicam','Etoricoxib (Arcoxia)','Diclofenac gel (Voltaren Emulgel) – far fewer side effects']},
+ opioid:{label:'Other opioid and strong pain options',items:['Paracetamol, alone or regularly, first|paracetamol','Codeine with paracetamol (Panadeine Forte)|codeine','Tramadol (Tramal)|tramadol','Tapentadol (Palexia)|tapentadol','Oxycodone (Endone, OxyContin)|oxycodone','Buprenorphine patches (Norspan)','Morphine (MS Contin)','Hydromorphone (Dilaudid)']},
+ abx:{label:'Other antibiotics',note:'The right antibiotic depends on the infection, test results and allergies. Only your prescriber can choose a substitute.',items:['Penicillins: amoxicillin (Amoxil), amoxicillin + clavulanate (Augmentin), phenoxymethylpenicillin (Cilicaine VK), flucloxacillin (Staphylex)|amoxicillin','Cephalosporins: cefalexin (Keflex), cefuroxime (Zinnat)|cefalexin','Macrolides: clarithromycin (Klacid), roxithromycin (Rulide), azithromycin (Zithromax), erythromycin (EES)|clarithromycin','Tetracyclines: doxycycline (Doryx), minocycline (Minomycin)|doxycycline','Quinolones: ciprofloxacin (Ciproxin), moxifloxacin (Avelox), norfloxacin|ciprofloxacin','Urinary infections: trimethoprim (Alprim), nitrofurantoin (Macrodantin)|trimethoprim','Metronidazole (Flagyl), tinidazole (Fasigyn)|metronidazole']},
+ antifungal:{label:'Other thrush and fungal treatments',items:['Fluconazole (Diflucan)|fluconazole','Clotrimazole cream or pessaries (Canesten)','Miconazole (Daktarin)','Nystatin (Nilstat)']},
+ thyroid:{label:'Other thyroid options',note:'Different brands of thyroxine may not be exactly interchangeable. Stick to one brand, and have a blood test if you switch.',items:['Levothyroxine: Eutroxsig, Oroxine, Eltroxin|levothyroxine','Liothyronine (Tertroxin) – specialist use']},
+ steroid:{label:'Other oral corticosteroids',items:['Prednisolone (Panafcortelone, Solone)|prednisolone','Prednisone (Sone)','Methylprednisolone (Medrol)','Dexamethasone (Dexmethsone)']},
+ gout:{label:'Other gout prevention medicines',items:['Allopurinol (Zyloprim, Progout)|allopurinol','Febuxostat (Adenuric)','Probenecid (Pro-Cid)']},
+ goutflare:{label:'Other gout flare treatments',items:['Colchicine (Colgout)|colchicine','Anti-inflammatories, e.g. naproxen|naproxen','Prednisolone|prednisolone']},
+ dmard:{label:'Other arthritis and immune medicines (specialist decision)',items:['Methotrexate (Methoblastin)|methotrexate','Leflunomide (Arava)','Hydroxychloroquine (Plaquenil)','Sulfasalazine (Salazopyrin EN)','Biologic medicines, e.g. adalimumab (Humira and biosimilars)']},
+ bone:{label:'Other osteoporosis medicines',items:['Alendronate (Fosamax)|alendronate','Risedronate (Actonel)','Zoledronic acid yearly infusion (Aclasta)','Denosumab injection every 6 months (Prolia, Jubbonti)|denosumab','Raloxifene (Evista)','Romosozumab (Evenity) or teriparatide (Forteo) – for severe osteoporosis']},
+ contra:{label:'Other contraception options',items:['Combined pill (e.g. Levlen ED, Yaz)|coc','Progestogen-only pill (Microlut, Noriday, Slinda)','Implant (Implanon NXT)','Hormonal IUD (Mirena, Kyleena)','Copper IUD','Injection (Depo-Provera)','Vaginal ring (NuvaRing)']},
+ '5ari':{label:'Other prostate medicines',items:['Finasteride (Proscar)|finasteride','Dutasteride (Avodart, Dutacor)|dutasteride','Alpha blockers: tamsulosin (Flomaxtra), silodosin (Urorec), alfuzosin (Xatral)|tamsulosin','Tamsulosin + dutasteride combined (Duodart)','Tadalafil 5 mg daily (Cialis)|tadalafil']},
+ bladder:{label:'Other overactive bladder medicines',items:['Oxybutynin (Ditropan)|oxybutynin','Solifenacin (Vesicare)','Darifenacin (Enablex)','Mirabegron (Betmiga) – no anticholinergic side effects such as confusion','Vibegron (Gemtesa)','Pelvic floor and bladder training with a continence physio']},
+ ed:{label:'Other erectile dysfunction medicines',items:['Sildenafil (Viagra)|sildenafil','Tadalafil (Cialis)|tadalafil','Vardenafil (Levitra)']},
+ antihist:{label:'Other antihistamines',items:['Non-drowsy: cetirizine (Zyrtec), loratadine (Claratyne), fexofenadine (Telfast), desloratadine (Aerius)|cetirizine','Sedating: promethazine (Phenergan)|promethazine','Steroid nasal sprays, e.g. Avamys, Nasonex, Rhinocort, for hay fever|fluticasonenasal']},
+ nasal:{label:'Other steroid nasal sprays',items:['Fluticasone furoate (Avamys)|fluticasonenasal','Fluticasone propionate (Flixonase)','Mometasone (Nasonex)','Budesonide (Rhinocort)','Azelastine + fluticasone (Dymista)']},
+ reliever:{label:'Other asthma relievers',items:['Salbutamol (Ventolin, Asmol)|salbutamol','Terbutaline (Bricanyl Turbuhaler)','Budesonide + formoterol as reliever (Symbicort, as per action plan)|symbicort']},
+ preventer:{label:'Other asthma preventers',items:['Budesonide + formoterol (Symbicort)|symbicort','Fluticasone + salmeterol (Seretide)','Fluticasone furoate + vilanterol (Breo Ellipta)','Fluticasone + formoterol (Flutiform)','Inhaled steroid alone, e.g. Flixotide, Pulmicort, QVAR','Montelukast (Singulair)|montelukast']},
+ triptan:{label:'Other migraine treatments',items:['Sumatriptan (Imigran)|sumatriptan','Rizatriptan (Maxalt)','Zolmitriptan (Zomig)','Naratriptan (Naramig)','Eletriptan (Relpax)','Aspirin or ibuprofen with an anti-nausea medicine']},
+ aed:{label:'Other epilepsy medicines',note:'Never switch or stop epilepsy medicines without your neurologist. Changes are made slowly.',items:['Levetiracetam (Keppra)|levetiracetam','Brivaracetam (Briviact)','Lamotrigine (Lamictal)|lamotrigine','Lacosamide (Vimpat)|lacosamide','Sodium valproate (Epilim)|valproate','Carbamazepine (Tegretol)|carbamazepine','Oxcarbazepine (Trileptal)','Topiramate (Topamax)','Zonisamide (Zonegran)','Perampanel (Fycompa)','Cenobamate (Xcopri)']},
+ mpn:{label:'Other treatments (haematologist decision)',items:['Hydroxycarbamide (Hydrea)|hydroxycarbamide','Anagrelide (Agrylin) – lowers platelets','Ropeginterferon alfa-2b injection (Besremi)','Ruxolitinib (Jakavi)','Venesection (removing blood), for polycythaemia']},
+ skinabx:{label:'Other skin infection options',items:['Mupirocin ointment (Bactroban)|mupirocin','Antiseptic washes or creams, e.g. povidone-iodine (Betadine) for mild impetigo','Oral antibiotics, e.g. cefalexin or flucloxacillin, for more widespread infection|cefalexin']},
+ sjw:{label:'Prescription alternatives',items:['Prescription antidepressants such as sertraline or escitalopram (see your GP)|sertraline','Psychological therapy (Medicare-subsidised with a Mental Health Treatment Plan)']},
+ joint_comp:{label:'Other options for joint pain',items:['Paracetamol|paracetamol','Diclofenac gel (Voltaren Emulgel)','Exercise and physiotherapy (the most effective long-term treatment for osteoarthritis)','Glucosamine|glucosamine','Fish oil|fishoil','Turmeric|turmeric']},
+ sleep_comp:{label:'Other sleep options',items:['Melatonin modified-release (Circadin)|melatonin','Valerian|valerian','Cognitive behavioural therapy for insomnia (CBT-i)','Short-term prescription sleeping tablets (see your GP)']},
+ iron:{label:'Other iron options',items:['Ferro-Grad C, Ferrograd, FGF (ferrous sulfate)','Maltofer (iron polymaltose) – often fewer stomach side effects','Iron infusion (Ferinject) if tablets don’t work or aren’t tolerated']},
+ calcium:{label:'Related options',items:['Calcium from food (dairy, fortified soy, tinned fish with bones)','Vitamin D (Ostelin, Blackmores Vitamin D3)','Calcium + vitamin D combined (Caltrate Plus, Ostelin Calcium & Vitamin D)']}
+};
+const MED_ALT = {
+ atorvastatin:['statin','lipid'],rosuvastatin:['statin','lipid'],simvastatin:['statin','lipid'],ezetimibe:['lipid','statin'],
+ perindopril:['acei','arb','bp_other'],ramipril:['acei','arb','bp_other'],irbesartan:['arb','acei','bp_other'],candesartan:['arb','acei','bp_other'],telmisartan:['arb','acei','bp_other'],
+ amlodipine:['dhp','bp_other'],metoprolol:['beta'],bisoprolol:['beta'],indapamide:['thiazide','bp_other'],furosemide:['loop'],spironolactone:['mra'],
+ warfarin:['anticoag'],apixaban:['anticoag'],rivaroxaban:['anticoag'],clopidogrel:['antiplatelet'],aspirin:['antiplatelet','simplepain'],
+ digoxin:['ratectl'],amiodarone:['rhythm'],gtn:['nitrate'],ismn:['nitrate'],diltiazem:['ratectl','bp_other'],verapamil:['ratectl','bp_other'],
+ metformin:['diabetes'],gliclazide:['diabetes'],empagliflozin:['sglt2','diabetes'],dapagliflozin:['sglt2','diabetes'],sitagliptin:['diabetes'],semaglutide:['diabetes'],insulin:['diabetes'],
+ pantoprazole:['ppi'],esomeprazole:['ppi'],omeprazole:['ppi'],metoclopramide:['antiemetic'],ondansetron:['antiemetic'],
+ sertraline:['ssri','ad_other'],escitalopram:['ssri','ad_other'],citalopram:['ssri','ad_other'],fluoxetine:['ssri','ad_other'],paroxetine:['ssri','ad_other'],
+ venlafaxine:['snri','ssri'],desvenlafaxine:['snri','ssri'],duloxetine:['snri','ssri','nervepain'],mirtazapine:['ad_other','ssri'],amitriptyline:['tca','nervepain'],
+ quetiapine:['antipsych'],olanzapine:['antipsych'],aripiprazole:['antipsych'],lithium:['moodstab'],
+ diazepam:['benzo'],temazepam:['sleep'],alprazolam:['benzo'],zolpidem:['sleep'],methylphenidate:['adhd'],lisdexamfetamine:['adhd'],
+ paracetamol:['simplepain'],ibuprofen:['nsaid','simplepain'],naproxen:['nsaid','simplepain'],diclofenac:['nsaid','simplepain'],celecoxib:['nsaid','simplepain'],meloxicam:['nsaid','simplepain'],
+ codeine:['opioid'],tramadol:['opioid'],oxycodone:['opioid'],tapentadol:['opioid'],pregabalin:['nervepain'],gabapentin:['nervepain'],
+ amoxicillin:['abx'],amoxiclav:['abx'],cefalexin:['abx'],doxycycline:['abx'],clarithromycin:['abx'],roxithromycin:['abx'],trimethoprim:['abx'],ciprofloxacin:['abx'],metronidazole:['abx'],fluconazole:['antifungal'],
+ levothyroxine:['thyroid'],prednisolone:['steroid'],allopurinol:['gout'],colchicine:['goutflare'],methotrexate:['dmard'],alendronate:['bone'],denosumab:['bone'],coc:['contra'],
+ finasteride:['5ari'],dutasteride:['5ari'],tamsulosin:['5ari'],oxybutynin:['bladder'],sildenafil:['ed'],tadalafil:['ed','5ari'],
+ cetirizine:['antihist'],loratadine:['antihist'],promethazine:['antihist'],salbutamol:['reliever'],symbicort:['preventer'],montelukast:['preventer'],sumatriptan:['triptan'],
+ levetiracetam:['aed'],valproate:['aed','moodstab'],carbamazepine:['aed'],lamotrigine:['aed','moodstab'],lacosamide:['aed'],
+ hydroxycarbamide:['mpn'],mupirocin:['skinabx'],fluticasonenasal:['nasal','antihist'],stjohns:['sjw'],
+ fishoil:['lipid','joint_comp'],glucosamine:['joint_comp'],turmeric:['joint_comp'],ginkgo:[],ginseng:[],valerian:['sleep_comp'],melatonin:['sleep','sleep_comp'],magnesium:[],calcium:['calcium','bone'],iron:['iron']
+};
+function alternativesHtml(m){
+  let h='';
+  const others=m.brands.filter(b=>!/\(with |\(.*injection|\(prescription\)/i.test(b));
+  if(others.length>1) h+='<div class="alt-group"><b>Same medicine, other brands</b>'+esc(others.join(', '))+'. <span class="muted">Generic brands with the same ingredient and strength work the same way. Your pharmacist can offer a cheaper brand.</span></div>';
+  for(const key of (MED_ALT[m.id]||[])){
+    const g=ALT_GROUPS[key]; if(!g) continue;
+    const items=g.items.map(x=>x.split('|')).filter(([,id])=>id!==m.id).map(([n])=>n);
+    if(!items.length) continue;
+    h+='<div class="alt-group"><b>'+esc(g.label)+'</b><ul class="clean">'+items.map(n=>'<li>'+esc(n)+'</li>').join('')+'</ul>'+(g.note?'<p class="small muted">'+esc(g.note)+'</p>':'')+'</div>';
+  }
+  if(!h) return '';
+  return '<details><summary>Alternatives available in Australia</summary>'+h+
+    '<p class="small muted">Only change or swap a medicine with your doctor. An alternative may not suit your conditions or your other medicines. Some are prescription only, or are PBS-subsidised only for certain conditions.</p></details>';
+}
 
 /* ------------------------------------------------------------------ */
 /* Engine                                                             */
@@ -966,9 +1141,10 @@ function showSuggest(){
   if(!q.value.trim()){sug.classList.add('hidden');q.setAttribute('aria-expanded','false');return;}
   if(!results.length){
     sug.classList.add('hidden'); q.setAttribute('aria-expanded','false');
-    nf.innerHTML='We don’t have <b>'+esc(q.value.trim())+'</b> in this list yet. Check the spelling, or try the generic name printed on the box under the brand name. <button type="button" class="btn-link" id="add-custom">Add it anyway</button> (we can’t show side effects for it, but it will appear on your printed list).';
+    nf.innerHTML='We don’t have <b>'+esc(q.value.trim())+'</b> in this list yet. Check the spelling, or try the generic name printed on the box under the brand name. <button type="button" class="btn-link" id="add-custom">Add it anyway</button> (we can’t show side effects for it, but it will appear on your printed list), or <button type="button" class="btn-link" id="req-custom">ask us to add it</button>.';
     nf.classList.remove('hidden');
     $('#add-custom').onclick=()=>{state.push({custom:q.value.trim()});save();q.value='';nf.classList.add('hidden');render();};
+    $('#req-custom').onclick=()=>openRequest(q.value.trim());
     return;
   }
   sug.innerHTML=results.map((r,i)=>'<button type="button" role="option" data-i="'+i+'" aria-selected="false"><span class="b">'+esc(r.isBrand?r.label:r.m.name)+'</span>'+(r.isBrand?' <span class="muted">('+esc(r.m.name)+')</span>':'')+'<br><span class="small muted">'+esc(r.m.use)+'</span></button>').join('');
@@ -1020,7 +1196,8 @@ function renderMed(e,idx){
   if(e.custom){
     return '<article class="card"><div class="med-head"><div><h3>'+esc(e.custom)+'</h3><div class="med-sub">Not in our list</div></div>'+
       '<button class="btn-link no-print" data-rm="'+idx+'">Remove</button></div>'+
-      '<p class="small muted">We don’t have information for this medicine, so it isn’t included in the combination check. Ask your pharmacist to check it against your other medicines, or read its Consumer Medicine Information (CMI).</p></article>';
+      '<p class="small muted">We don’t have information for this medicine, so it isn’t included in the combination check. Ask your pharmacist to check it against your other medicines, or read its Consumer Medicine Information (CMI).</p>'+
+      '<p class="no-print"><button class="btn-link" data-req="'+idx+'">Ask us to add this medicine</button></p></article>';
   }
   const m=BY_ID[e.id]; const dc=doseCheck(e);
   const doseTxt=e.amt?(e.amt+' '+e.unit+' '+FREQ_TXT[e.freq]+(e.freq==='prn'&&e.prnmax?' (up to '+e.prnmax+'× a day)':'')):(FREQ_TXT[e.freq]?'Dose not entered · '+FREQ_TXT[e.freq]:'Dose not entered');
@@ -1037,6 +1214,7 @@ function renderMed(e,idx){
   h+='<p class="small muted">Many people get none of these, or they ease after the first week or two.</p>';
   h+='<div class="serious"><h4>Get medical help if you notice</h4><ul class="clean">'+m.serious.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></div>';
   if(m.tips&&m.tips.length) h+='<details><summary>Tips</summary><ul class="clean">'+m.tips.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul></details>';
+  h+=alternativesHtml(m);
   return h+'</article>';
 }
 
@@ -1045,6 +1223,7 @@ function render(){
   $('#count').textContent=state.length?'('+state.length+')':'';
   list.innerHTML=state.length?state.map(renderMed).join(''):'<p class="empty">No medicines added yet.</p>';
   list.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{state.splice(+b.dataset.rm,1);save();render();});
+  list.querySelectorAll('[data-req]').forEach(b=>b.onclick=()=>openRequest(state[+b.dataset.req].custom));
   list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{
     const e=state[+b.dataset.edit]; const m=BY_ID[e.id];
     pick({m,isBrand:false,label:m.name});
@@ -1074,8 +1253,36 @@ function render(){
 }
 render();
 
+/* ------------------------------------------------------------------ */
+/* Request a medicine (opens the user's email app via mailto:)         */
+/* ------------------------------------------------------------------ */
+const REQUEST_EMAIL='medical@bladestar.online';
+function openRequest(name){
+  $('#req-name').value=name||'';
+  $('#request').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>$(name?'#req-detail':'#req-name').focus({preventScroll:true}),300);
+}
+function buildRequestMailto(f){
+  const subject='Medicine request: '+f.name;
+  const body=['Please add this medicine to Medical_Crosser.','','Medicine: '+f.name,
+    'Brand / strength: '+(f.detail||'-'),'Notes: '+(f.note||'-'),'Reply to: '+(f.email||'(no reply needed)'),
+    '','Sent from '+location.href.split('#')[0]].join('\n');
+  return 'mailto:'+REQUEST_EMAIL+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+}
+$('#req-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const f={name:$('#req-name').value.trim(),detail:$('#req-detail').value.trim(),note:$('#req-note').value.trim(),email:$('#req-email').value.trim()};
+  if(!f.name){$('#req-name').focus();return;}
+  const url=buildRequestMailto(f);
+  window.location.href=url;
+  const msg=$('#req-msg');
+  msg.innerHTML='<span class="ok-msg">Your email app should now open with the request ready. Press Send there.</span><br>Nothing opened? Email <a href="'+esc(url)+'">'+REQUEST_EMAIL+'</a> with the medicine name. <button type="button" class="btn-link" id="req-copy">Copy address</button>';
+  msg.classList.remove('hidden');
+  $('#req-copy').onclick=async()=>{try{await navigator.clipboard.writeText(REQUEST_EMAIL);$('#req-copy').textContent='Copied ✓';}catch(err){$('#req-copy').textContent=REQUEST_EMAIL;}};
+});
+
 // Expose for testing
-window.__med={MEDS,checkCombos,sharedEffects,doseCheck,search,SE};
+window.__med={MEDS,checkCombos,sharedEffects,doseCheck,search,SE,ALT_GROUPS,MED_ALT,alternativesHtml,buildRequestMailto};
 </script>
 </body>
 </html>
